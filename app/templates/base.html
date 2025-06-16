@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ titulo or "Mi App Microfinanzas" }}</title>
+  <link href="{{ url_for('static', filename='css/tailwind.css') }}" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <nav class="bg-white shadow p-4 flex space-x-4">
+    <a href="{{ url_for('main.index') }}" class="font-semibold hover:underline">Inicio</a>
+    <a href="{{ url_for('main.visualizar') }}" class="hover:underline">Gráficos</a>
+    <a href="{{ url_for('main.predecir_uno') }}" class="hover:underline">Predecir Cliente</a>
+    <a href="{{ url_for('main.predecir_masivo') }}" class="hover:underline">Carga Masiva</a>
+  </nav>
+  <main class="p-6">
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

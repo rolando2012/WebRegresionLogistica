@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="mb-8">
+        <nav class="flex items-center space-x-2 text-sm text-gray-500">
+            <a href="{{ url_for('main.index') }}" class="hover:text-gray-700">Inicio</a>
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            <span class="text-gray-900">Visualizar Datos</span>
+        </nav>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+        <div class="text-center py-12">
+            <div class="bg-blue-50 w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-6">
+                <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">Visualizar Datos</h1>
+            <p class="text-gray-600 mb-8">Explora gráficos interactivos, correlaciones y métricas del modelo</p>
+            <div class="bg-gray-50 rounded-lg p-8">
+                <p class="text-gray-500">Esta funcionalidad será implementada próximamente.</p>
+                <p class="text-gray-500 mt-2">Aquí podrás ver dashboards interactivos con los datos del modelo.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

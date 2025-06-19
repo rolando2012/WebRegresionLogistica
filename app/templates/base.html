@@ -32,12 +32,14 @@
                         <h1 class="text-xl font-semibold text-gray-900">Predictor de Deserción</h1>
                     </a>
                 </div>
+                {% if request.endpoint == 'main.index' %}
                 <button class="bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors flex items-center space-x-2">
                     <span>Comenzar Análisis</span>
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                     </svg>
                 </button>
+                {% endif %}
             </div>
         </div>
     </header>

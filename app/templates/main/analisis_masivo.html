@@ -2,17 +2,8 @@
 
 {% block content %}
 <div class="flex min-h-screen bg-gray-50">
-    <!-- Sidebar Estático -->
-    <div class="w-64 bg-white shadow-sm border-r border-gray-200 fixed h-full overflow-y-auto">
-        <!-- Header del Sidebar -->
-        <div class="p-4 border-b border-gray-200">
-            <div class="flex items-center space-x-2">
-                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                </svg>
-                <h2 class="font-semibold text-gray-900">Predictor de Deserción</h2>
-            </div>
-        </div>
+    <!-- Sidebar -->
+    <div class="w-64 bg-white shadow-sm border-r border-gray-200 min-h-screen">
 
         <!-- Navegación -->
         <nav class="p-4 space-y-2">
@@ -58,7 +49,7 @@
     </div>
 
     <!-- Contenido Principal -->
-    <div class="flex-1 ml-64">
+    <div class="flex-1">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <!-- Breadcrumb -->
             <div class="mb-8">

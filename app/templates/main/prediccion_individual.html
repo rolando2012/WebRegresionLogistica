@@ -1,29 +1,162 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="mb-8">
-        <nav class="flex items-center space-x-2 text-sm text-gray-500">
-            <a href="{{ url_for('main.index') }}" class="hover:text-gray-700">Inicio</a>
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-            </svg>
-            <span class="text-gray-900">Predicción Individual</span>
+<div class="flex min-h-screen bg-gray-50">
+    <!-- Sidebar Estático -->
+    <div class="w-64 bg-white shadow-sm border-r border-gray-200 fixed h-full overflow-y-auto">
+        <!-- Header del Sidebar -->
+        <div class="p-4 border-b border-gray-200">
+            <div class="flex items-center space-x-2">
+                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+                <h2 class="font-semibold text-gray-900">Predictor de Deserción</h2>
+            </div>
+        </div>
+
+        <!-- Navegación -->
+        <nav class="p-4 space-y-2">
+            <!-- Visualizar Datos -->
+            <a href="{{ url_for('main.visualizar_datos') }}" class="block p-3 rounded-lg hover:bg-gray-100 transition-colors">
+                <div class="flex items-center space-x-3">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    <div>
+                        <div class="font-medium text-gray-900">Visualizar Datos</div>
+                        <div class="text-sm text-gray-500">Gráficos y análisis de datos</div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Predicción Individual - Activo -->
+            <div class="bg-gray-900 text-white rounded-lg p-3">
+                <div class="flex items-center space-x-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    <div>
+                        <div class="font-medium">Predicción Individual</div>
+                        <div class="text-sm text-gray-300">Predecir deserción de un cliente</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Predicción Masiva -->
+            <a href="{{ url_for('main.analisis_masivo') }}" class="block p-3 rounded-lg hover:bg-gray-100 transition-colors">
+                <div class="flex items-center space-x-3">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    <div>
+                        <div class="font-medium text-gray-900">Predicción Masiva</div>
+                        <div class="text-sm text-gray-500">Procesar múltiples clientes</div>
+                    </div>
+                </div>
+            </a>
         </nav>
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-        <div class="text-center py-12">
-            <div class="bg-blue-50 w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-6">
-                <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                </svg>
+    <!-- Contenido Principal -->
+    <div class="flex-1 ml-64">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Breadcrumb -->
+            <div class="mb-8">
+                <nav class="flex items-center space-x-2 text-sm text-gray-500">
+                    <a href="{{ url_for('main.index') }}" class="hover:text-gray-700">Inicio</a>
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="text-gray-900">Predicción Individual</span>
+                </nav>
             </div>
-            <h1 class="text-3xl font-bold text-gray-900 mb-4">Predicción Individual</h1>
-            <p class="text-gray-600 mb-8">Analiza el riesgo de deserción de un cliente específico</p>
-            <div class="bg-gray-50 rounded-lg p-8">
-                <p class="text-gray-500">Esta funcionalidad será implementada próximamente.</p>
-                <p class="text-gray-500 mt-2">Aquí podrás ingresar datos de un cliente y obtener su predicción de deserción.</p>
+
+            <!-- Título de la Sección -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Predicción Individual</h1>
+                <p class="text-gray-600">Analiza el riesgo de deserción de un cliente específico</p>
+            </div>
+
+            <!-- Formulario de Predicción -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Datos del Cliente</h2>
+                
+                <form class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Edad -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Edad</label>
+                            <input type="number" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Ej: 35">
+                        </div>
+
+                        <!-- Género -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Género</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Seleccionar género</option>
+                                <option value="M">Masculino</option>
+                                <option value="F">Femenino</option>
+                            </select>
+                        </div>
+
+                        <!-- Saldo de Cuenta -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Saldo de Cuenta (Bs.)</label>
+                            <input type="number" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Ej: 5000.00">
+                        </div>
+
+                        <!-- Número de Productos -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Número de Productos</label>
+                            <input type="number" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Ej: 2">
+                        </div>
+
+                        <!-- Tarjeta de Crédito -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">¿Tiene Tarjeta de Crédito?</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Seleccionar</option>
+                                <option value="1">Sí</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+
+                        <!-- Es Miembro Activo -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">¿Es Miembro Activo?</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Seleccionar</option>
+                                <option value="1">Sí</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Botón de Predicción -->
+                    <div class="flex justify-center pt-6">
+                        <button type="submit" class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>Realizar Predicción</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Resultado de la Predicción -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mt-8">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Resultado de la Predicción</h2>
+                
+                <div class="bg-gray-50 rounded-lg p-8 text-center">
+                    <div class="bg-blue-50 w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                    </div>
+                    <p class="text-gray-500 text-lg">Completa el formulario para ver la predicción</p>
+                    <p class="text-gray-400 mt-2">El resultado mostrará la probabilidad de deserción del cliente</p>
+                </div>
             </div>
         </div>
     </div>

@@ -87,21 +87,14 @@
                     </div>
                 </div>
 
-                <!-- Sección: Deserción por Edad -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-2">Deserción por Edad</h2>
-                    <p class="text-gray-600 mb-6">Distribución de deserción según grupos etarios</p>
-                    
-                    <div class="bg-gray-50 rounded-lg p-8 text-center">
-                        <div class="bg-green-50 w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                            </svg>
-                        </div>
-                        <p class="text-gray-500 text-lg">Gráfico de barras por grupos de edad</p>
-                        <p class="text-gray-400 mt-2">Análisis de deserción por rangos etarios</p>
-                    </div>
-                </div>
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <h2 class="text-xl font-semibold text-gray-900 mb-2">Estado de Ahorro Activo</h2>
+    <p class="text-gray-600 mb-6">Distribución de clientes por estado de ahorro</p>
+    
+    <div class="bg-gray-50 rounded-lg p-8 text-center">
+        <!-- El JavaScript reemplazará este contenido -->
+    </div>
+</div>
 
                 <!-- Sección: Métricas del Modelo -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -130,4 +123,7 @@
         </div>
     </div>
 </div>
+<!-- Cargar Chart.js y el script personalizado -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<script src="{{ url_for('static', filename='js/visualizar_datos.js') }}"></script>
 {% endblock %}

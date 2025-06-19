@@ -1,4 +1,7 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, jsonify
+import json
+import os
+from flask import current_app
 
 main = Blueprint('main', __name__)
 
@@ -21,3 +24,17 @@ def prediccion_individual():
 def analisis_masivo():
     """Página para análisis masivo"""
     return render_template('main/analisis_masivo.html', titulo="Análisis Masivo")
+
+@main.route('/data')
+def data():
+    """Endpoint para obtener datos del JSON"""
+    json_path = os.path.join(current_app.root_path, 'data', 'results_microfinanzas.json')
+    if not os.path.isfile(json_path):
+        return jsonify({'error': 'JSON not found'}), 404
+    
+    try:
+        with open(json_path, 'r', encoding='utf-8') as f:
+            results = json.load(f)
+        return jsonify(results)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

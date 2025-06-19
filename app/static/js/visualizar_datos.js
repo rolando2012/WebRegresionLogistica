@@ -54,7 +54,7 @@ function createDesercionDistribution(data) {
 
     // Reemplazar el contenido placeholder
     container.innerHTML = `
-        <div class="relative">
+        <div class="relative h-96">
             <canvas id="desercionChart" width="400" height="400"></canvas>
             <div class="mt-4 grid grid-cols-2 gap-4 text-sm">
                 <div class="bg-white rounded-lg p-3 shadow-sm">
@@ -67,10 +67,10 @@ function createDesercionDistribution(data) {
                 </div>
                 <div class="bg-white rounded-lg p-3 shadow-sm">
                     <div class="flex items-center justify-center mb-1">
-                        <div class="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
+                        <div class="w-3 h-3 bg-orange-500 rounded-full mr-2"></div>
                         <span class="font-medium">Desertores</span>
                     </div>
-                    <div class="text-2xl font-bold text-red-600" id="desertoresCount">-</div>
+                    <div class="text-2xl font-bold text-orange-600" id="desertoresCount">-</div>
                     <div class="text-gray-500" id="desertoresPercent">-</div>
                 </div>
             </div>
@@ -110,7 +110,7 @@ function createDesercionDistribution(data) {
             ),
             datasets: [{
                 data: values,
-                backgroundColor: [colors.primary, colors.secondary],
+                backgroundColor: [colors.primary, colors.orange],
                 borderColor: ['#ffffff', '#ffffff'],
                 borderWidth: 3,
                 hoverOffset: 8

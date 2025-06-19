@@ -155,114 +155,90 @@ function createDesercionDistribution(data) {
 
 // 2. Gráfico de Estado Ahorro Activo (Bar Chart mejorado)
 function createEstadoAhorroActivo(data) {
-    const containers = document.querySelectorAll('.bg-gray-50.rounded-lg.p-8.text-center');
-    const categoryContainer = containers[1]; // Segundo contenedor
-    if (!categoryContainer) return;
+  const containers = document.querySelectorAll('.bg-gray-50.rounded-lg.p-8.text-center');
+  const categoryContainer = containers[1]; // Segundo contenedor
+  if (!categoryContainer) return;
 
-    categoryContainer.innerHTML = `
-        <div class="relative h-96">
-            <canvas id="categoryChart"></canvas>
-        </div>
-    `;
+  categoryContainer.innerHTML = `
+    <div class="relative h-96">
+      <canvas id="categoryChart"></canvas>
+    </div>
+  `;
 
-    const ctx = document.getElementById('categoryChart').getContext('2d');
-    
-    // Obtener datos de estado_ahorro_activo
-    let categoryData = {};
-    if (data.cat_counts && data.cat_counts.estado_ahorro_activo) {
-        categoryData = data.cat_counts.estado_ahorro_activo;
-    }
+  const ctx = document.getElementById('categoryChart').getContext('2d');
 
-    // Si no hay datos, mostrar error
-    if (Object.keys(categoryData).length === 0) {
-        categoryContainer.innerHTML = `
-            <div class="text-center py-8">
-                <p class="text-gray-500">No se encontraron datos de estado_ahorro_activo</p>
-            </div>
-        `;
-        return;
-    }
+  // Sacamos los datos
+  const counts = data.cat_counts?.estado_ahorro_activo || { '0': 0, '1': 0 };
+  const labels = ['0', '1'];
+  const values = [counts['0'] || 0, counts['1'] || 0];
 
-    // Preparar datos para el gráfico
-    const labels = Object.keys(categoryData).map(key => 
-        key === '1' ? 'Ahorro Activo' : 'Sin Ahorro Activo'
-    );
-    const values = Object.values(categoryData);
-
-    const gradient1 = createGradient(ctx, colors.gradient.green[0], colors.gradient.green[1], true);
-
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [
-                {
-                    label: 'Número de Clientes',
-                    data: values,
-                    backgroundColor: gradient1,
-                    borderColor: colors.success,
-                    borderWidth: 2,
-                    borderRadius: 8,
-                    borderSkipped: false,
-                }
-            ]
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Clientes',
+        data: values,
+        backgroundColor: [ colors.primary, colors.orange ],
+        borderRadius: 8,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          title: {
+          display: true,
+          text: 'estado_ahorro_activo',        // etiqueta para eje X
+          font: {
+            size: 14,
+            weight: '500'
+          },
+          color: '#374151'
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                x: {
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        font: {
-                            weight: '500',
-                            size: 14
-                        }
-                    }
-                },
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.05)'
-                    },
-                    ticks: {
-                        callback: function(value) {
-                            return value.toLocaleString();
-                        },
-                        font: {
-                            size: 12
-                        }
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    titleColor: 'white',
-                    bodyColor: 'white',
-                    borderColor: 'rgba(255, 255, 255, 0.1)',
-                    borderWidth: 1,
-                    callbacks: {
-                        label: function(context) {
-                            const total = values.reduce((a, b) => a + b, 0);
-                            const percentage = ((context.parsed.y / total) * 100).toFixed(1);
-                            return `${context.parsed.y.toLocaleString()} clientes (${percentage}%)`;
-                        }
-                    }
-                }
-            },
-            animation: {
-                duration: 1500,
-                easing: 'easeInOutQuart'
-            }
+          grid: { display: false },
+          ticks: { font: { weight: '500', size: 14 } }
+        },
+        y: {
+          title: {
+          display: true,
+          text: 'Cuentas',         // etiqueta para eje Y
+          font: {
+            size: 14,
+            weight: '500'
+          },
+          color: '#374151'
+        },
+          beginAtZero: true,
+          grid: { color: 'rgba(0,0,0,0.05)' },
+          ticks: {
+            callback: v => v.toLocaleString(),
+            font: { size: 12 }
+          }
         }
-    });
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: { /* tu configuración existente */ },
+        datalabels: {
+          anchor: 'end',
+          align: 'end',
+          font: { weight: '600', size: 12 },
+          formatter: v => v.toLocaleString(),
+          color: '#374151'  // un gris oscuro para contraste
+        }
+      },
+      animation: {
+        duration: 1500,
+        easing: 'easeInOutQuart'
+      }
+    },
+    plugins: [ ChartDataLabels ]  // habilita el plugin
+  });
 }
+
 
 // 3. Gráfico de Variables que más Afectan la Deserción
 function createVariableImportance(data) {

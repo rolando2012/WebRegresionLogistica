@@ -1,9 +1,13 @@
-from flask import Blueprint, render_template, jsonify
+from flask import Blueprint, render_template, jsonify, request
 import json
 import os
 from flask import current_app
+from app.services.prediccion_service import PrediccionService
 
 main = Blueprint('main', __name__)
+
+# Instancia del servicio de predicción
+prediccion_service = PrediccionService()
 
 @main.route('/')
 def index():
@@ -24,6 +28,68 @@ def prediccion_individual():
 def analisis_masivo():
     """Página para análisis masivo"""
     return render_template('main/analisis_masivo.html', titulo="Análisis Masivo")
+
+@main.route('/api/predecir-desercion', methods=['POST'])
+def api_predecir_desercion():
+    """
+    API endpoint para predecir deserción de un cliente individual
+    """
+    try:
+        # Obtener datos del request
+        datos = request.get_json()
+        
+        if not datos:
+            return jsonify({
+                'error': 'No se recibieron datos',
+                'codigo': 'DATOS_FALTANTES'
+            }), 400
+        
+        # Validar datos
+        es_valido, errores = prediccion_service.validar_datos(datos)
+        
+        if not es_valido:
+            return jsonify({
+                'error': 'Datos inválidos',
+                'errores': errores,
+                'codigo': 'DATOS_INVALIDOS'
+            }), 400
+        
+        # Realizar predicción
+        resultado = prediccion_service.predecir_desercion(datos)
+        
+        return jsonify({
+            'success': True,
+            'probabilidad': resultado['probabilidad'],
+            'prediccion': resultado['prediccion'],
+            'z_score': resultado['z_score'],
+            'mensaje': 'Predicción realizada exitosamente'
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'error': f'Error interno del servidor: {str(e)}',
+            'codigo': 'ERROR_INTERNO'
+        }), 500
+
+@main.route('/api/health', methods=['GET'])
+def api_health():
+    """
+    Endpoint para verificar el estado de la aplicación y el modelo
+    """
+    try:
+        modelo_cargado = prediccion_service.modelo is not None
+        
+        return jsonify({
+            'status': 'ok',
+            'modelo_cargado': modelo_cargado,
+            'timestamp': json.dumps(None, default=str)
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'error': str(e)
+        }), 500
 
 @main.route('/data')
 def data():

@@ -4,7 +4,6 @@
 <div class="flex min-h-screen bg-gray-50">
     <!-- Sidebar -->
     <div class="w-64 bg-white shadow-sm border-r border-gray-200 min-h-screen">
-
         <!-- Navegación -->
         <nav class="p-4 space-y-2">
             <!-- Visualizar Datos -->
@@ -65,91 +64,346 @@
             <!-- Título de la Sección -->
             <div class="mb-8">
                 <h1 class="text-3xl font-bold text-gray-900 mb-2">Predicción Individual</h1>
-                <p class="text-gray-600">Analiza el riesgo de deserción de un cliente específico</p>
+                <p class="text-gray-600">Predice la probabilidad de deserción de un cliente específico</p>
             </div>
 
-            <!-- Formulario de Predicción -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h2 class="text-xl font-semibold text-gray-900 mb-6">Datos del Cliente</h2>
-                
-                <form class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Contenedor con dos columnas -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Formulario de Predicción -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Datos del Cliente</h2>
+                    <p class="text-gray-600 text-sm mb-6">Ingresa los datos del cliente para obtener la predicción</p>
+                    
+                    <form id="prediccionForm" class="space-y-4">
                         <!-- Edad -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Edad</label>
-                            <input type="number" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Ej: 35">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Edad (años)</label>
+                            <input type="number" id="edad" name="edad" min="18" max="80" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" 
+                                   placeholder="18 - 80" required>
                         </div>
 
-                        <!-- Género -->
+                        <!-- Tasa de Interés -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Género</label>
-                            <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                <option value="">Seleccionar género</option>
-                                <option value="M">Masculino</option>
-                                <option value="F">Femenino</option>
-                            </select>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Tasa de Interés (%)</label>
+                            <input type="number" id="tasa_interes" name="tasa_interes" min="0" max="50" step="0.1"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" 
+                                   placeholder="0 - 50" required>
                         </div>
 
-                        <!-- Saldo de Cuenta -->
+                        <!-- Porcentaje de Pago -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Saldo de Cuenta (Bs.)</label>
-                            <input type="number" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Ej: 5000.00">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Porcentaje de Pago (%)</label>
+                            <input type="number" id="porcentaje_pago" name="porcentaje_pago" min="0" max="100" step="0.1"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" 
+                                   placeholder="0 - 100" required>
                         </div>
 
-                        <!-- Número de Productos -->
+                        <!-- Días de Mora -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Número de Productos</label>
-                            <input type="number" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Ej: 2">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Días de Mora (días)</label>
+                            <input type="number" id="dias_de_mora" name="dias_de_mora" min="0" max="365"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" 
+                                   placeholder="0 - 365" required>
                         </div>
 
-                        <!-- Tarjeta de Crédito -->
+                        <!-- Plazo -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">¿Tiene Tarjeta de Crédito?</label>
-                            <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Plazo (meses)</label>
+                            <input type="number" id="plazo_credito_meses" name="plazo_credito_meses" min="1" max="60"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" 
+                                   placeholder="1 - 60" required>
+                        </div>
+
+                        <!-- Número de Microseguros -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Número de Microseguros (productos)</label>
+                            <input type="number" id="num_microseguros" name="num_microseguros" min="0" max="10"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" 
+                                   placeholder="0 - 10" required>
+                        </div>
+
+                        <!-- Productos Vigentes -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Productos Vigentes (productos)</label>
+                            <input type="number" id="n_productos_vigentes" name="n_productos_vigentes" min="0" max="20"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" 
+                                   placeholder="0 - 20" required>
+                        </div>
+
+                        <!-- Créditos Vigentes -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Créditos Vigentes (créditos)</label>
+                            <input type="number" id="n_creditos_vigentes" name="n_creditos_vigentes" min="0" max="10"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" 
+                                   placeholder="0 - 10" required>
+                        </div>
+
+                        <!-- Calidad de Servicio -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Calidad de Servicio (escala)</label>
+                            <input type="number" id="calidad_servicio" name="calidad_servicio" min="1" max="5" step="0.1"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" 
+                                   placeholder="1 - 5" required>
+                        </div>
+
+                        <!-- Estado de Ahorro -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Estado de Ahorro (binario)</label>
+                            <select id="estado_ahorro_activo" name="estado_ahorro_activo" 
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" required>
                                 <option value="">Seleccionar</option>
-                                <option value="1">Sí</option>
-                                <option value="0">No</option>
+                                <option value="1">Activo (1)</option>
+                                <option value="0">Inactivo (0)</option>
                             </select>
                         </div>
 
-                        <!-- Es Miembro Activo -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">¿Es Miembro Activo?</label>
-                            <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                <option value="">Seleccionar</option>
-                                <option value="1">Sí</option>
-                                <option value="0">No</option>
-                            </select>
+                        <!-- Botón de Predicción -->
+                        <div class="pt-4">
+                            <button type="submit" id="btnPrediccion" 
+                                    class="w-full bg-black text-white px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors text-sm font-medium">
+                                Predecir Deserción
+                            </button>
                         </div>
-                    </div>
+                    </form>
+                </div>
 
-                    <!-- Botón de Predicción -->
-                    <div class="flex justify-center pt-6">
-                        <button type="submit" class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                <!-- Resultado de la Predicción -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Resultado de la Predicción</h2>
+                    <p class="text-gray-600 text-sm mb-6">Análisis de riesgo de deserción del cliente</p>
+                    
+                    <!-- Estado inicial -->
+                    <div id="estadoInicial" class="text-center py-12">
+                        <div class="bg-gray-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" 
+                                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
-                            <span>Realizar Predicción</span>
-                        </button>
+                        </div>
+                        <p class="text-gray-500">Completa el formulario y haz clic en "Predecir" para ver los resultados</p>
                     </div>
-                </form>
-            </div>
 
-            <!-- Resultado de la Predicción -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mt-8">
-                <h2 class="text-xl font-semibold text-gray-900 mb-6">Resultado de la Predicción</h2>
-                
-                <div class="bg-gray-50 rounded-lg p-8 text-center">
-                    <div class="bg-blue-50 w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                        </svg>
+                    <!-- Estado de carga -->
+                    <div id="estadoCarga" class="text-center py-12 hidden">
+                        <div class="bg-blue-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                        </div>
+                        <p class="text-gray-600 font-medium">Procesando...</p>
+                        <p class="text-gray-400 text-sm mt-1">Analizando los datos del cliente</p>
                     </div>
-                    <p class="text-gray-500 text-lg">Completa el formulario para ver la predicción</p>
-                    <p class="text-gray-400 mt-2">El resultado mostrará la probabilidad de deserción del cliente</p>
+
+                    <!-- Resultado -->
+                    <div id="estadoResultado" class="hidden">
+                        <!-- Probabilidad -->
+                        <div class="text-center mb-6">
+                            <div class="text-4xl font-bold text-gray-900 mb-2" id="probabilidadValor">--</div>
+                            <div class="inline-block px-3 py-1 rounded-full text-sm font-medium" id="riesgoNivel">
+                                <!-- Dinámico: Riesgo BAJO/MEDIO/ALTO -->
+                            </div>
+                        </div>
+
+                        <!-- Gráfico -->
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-3">Posición en Curva Logística</h3>
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <canvas id="graficoSigmoide" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Interpretación -->
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <div class="flex items-start space-x-3">
+                                <svg class="w-5 h-5 text-green-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                </svg>
+                                <div>
+                                    <p class="text-sm text-gray-700" id="interpretacionTexto">
+                                        <!-- Texto dinámico de interpretación -->
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('prediccionForm');
+    const btnPrediccion = document.getElementById('btnPrediccion');
+    const estadoInicial = document.getElementById('estadoInicial');
+    const estadoCarga = document.getElementById('estadoCarga');
+    const estadoResultado = document.getElementById('estadoResultado');
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Deshabilitar botón y mostrar estado de carga
+        btnPrediccion.disabled = true;
+        btnPrediccion.innerHTML = 'Procesando...';
+        estadoInicial.classList.add('hidden');
+        estadoResultado.classList.add('hidden');
+        estadoCarga.classList.remove('hidden');
+
+        // Recopilar datos del formulario
+        const formData = new FormData(form);
+        const datos = {};
+        for (let [key, value] of formData.entries()) {
+            datos[key] = parseFloat(value);
+        }
+
+        try {
+            // Llamar a la API
+            const response = await fetch('/api/predecir-desercion', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(datos)
+            });
+
+            if (!response.ok) {
+                throw new Error('Error en la predicción');
+            }
+
+            const resultado = await response.json();
+            
+            // Mostrar resultados
+            mostrarResultado(resultado);
+            
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al realizar la predicción. Por favor, intenta nuevamente.');
+        } finally {
+            // Restaurar botón
+            btnPrediccion.disabled = false;
+            btnPrediccion.innerHTML = 'Predecir Deserción';
+            estadoCarga.classList.add('hidden');
+        }
+    });
+
+    function mostrarResultado(resultado) {
+        const probabilidadValor = document.getElementById('probabilidadValor');
+        const riesgoNivel = document.getElementById('riesgoNivel');
+        const interpretacionTexto = document.getElementById('interpretacionTexto');
+
+        // Mostrar probabilidad
+        const probabilidad = Math.round(resultado.probabilidad * 100);
+        probabilidadValor.textContent = `${probabilidad}%`;
+
+        // Determinar nivel de riesgo
+        let nivelRiesgo, colorClase, interpretacion;
+        if (probabilidad < 30) {
+            nivelRiesgo = 'Riesgo BAJO';
+            colorClase = 'bg-green-100 text-green-800';
+            interpretacion = `Con un ${probabilidad}% de probabilidad, este perfil está en zona de riesgo bajo. El cliente tiene alta probabilidad de mantenerse fiel.`;
+        } else if (probabilidad < 70) {
+            nivelRiesgo = 'Riesgo MEDIO';
+            colorClase = 'bg-yellow-100 text-yellow-800';
+            interpretacion = `Con un ${probabilidad}% de probabilidad, este perfil está en zona de riesgo medio. Se recomienda seguimiento y estrategias de retención.`;
+        } else {
+            nivelRiesgo = 'Riesgo ALTO';
+            colorClase = 'bg-red-100 text-red-800';
+            interpretacion = `Con un ${probabilidad}% de probabilidad, este perfil está en zona de riesgo alto. Se requieren acciones inmediatas de retención.`;
+        }
+
+        riesgoNivel.textContent = nivelRiesgo;
+        riesgoNivel.className = `inline-block px-3 py-1 rounded-full text-sm font-medium ${colorClase}`;
+        interpretacionTexto.textContent = interpretacion;
+
+        // Dibujar gráfico
+        dibujarGraficoSigmoide(resultado);
+
+        // Mostrar resultado
+        estadoResultado.classList.remove('hidden');
+    }
+
+    function dibujarGraficoSigmoide(resultado) {
+        const canvas = document.getElementById('graficoSigmoide');
+        const ctx = canvas.getContext('2d');
+        
+        // Limpiar canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Configuración
+        const width = canvas.width;
+        const height = canvas.height;
+        const padding = 40;
+        const plotWidth = width - 2 * padding;
+        const plotHeight = height - 2 * padding;
+        
+        // Rango de z (score lineal)
+        const zMin = resultado.z_score - 3;
+        const zMax = resultado.z_score + 3;
+        
+        // Función para convertir coordenadas
+        function toPixelX(z) {
+            return padding + ((z - zMin) / (zMax - zMin)) * plotWidth;
+        }
+        
+        function toPixelY(prob) {
+            return height - padding - prob * plotHeight;
+        }
+        
+        // Dibujar curva sigmoide
+        ctx.beginPath();
+        ctx.strokeStyle = '#9CA3AF';
+        ctx.lineWidth = 2;
+        
+        for (let i = 0; i <= plotWidth; i++) {
+            const z = zMin + (i / plotWidth) * (zMax - zMin);
+            const prob = 1 / (1 + Math.exp(-z));
+            const x = padding + i;
+            const y = toPixelY(prob);
+            
+            if (i === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        }
+        ctx.stroke();
+        
+        // Dibujar punto del cliente
+        const clienteX = toPixelX(resultado.z_score);
+        const clienteY = toPixelY(resultado.probabilidad);
+        
+        ctx.beginPath();
+        ctx.arc(clienteX, clienteY, 6, 0, 2 * Math.PI);
+        ctx.fillStyle = '#F97316';
+        ctx.fill();
+        
+        // Dibujar ejes
+        ctx.beginPath();
+        ctx.strokeStyle = '#6B7280';
+        ctx.lineWidth = 1;
+        
+        // Eje X
+        ctx.moveTo(padding, height - padding);
+        ctx.lineTo(width - padding, height - padding);
+        
+        // Eje Y
+        ctx.moveTo(padding, padding);
+        ctx.lineTo(padding, height - padding);
+        ctx.stroke();
+        
+        // Etiquetas
+        ctx.fillStyle = '#6B7280';
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+        
+        // Etiquetas del eje Y
+        ctx.textAlign = 'right';
+        ctx.fillText('0', padding - 5, height - padding + 4);
+        ctx.fillText('25', padding - 5, toPixelY(0.25) + 4);
+        ctx.fillText('50', padding - 5, toPixelY(0.5) + 4);
+        ctx.fillText('75', padding - 5, toPixelY(0.75) + 4);
+        ctx.fillText('100', padding - 5, toPixelY(1) + 4);
+    }
+});
+</script>
 {% endblock %}

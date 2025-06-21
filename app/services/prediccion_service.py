@@ -123,7 +123,7 @@ class PrediccionService:
                 errores.append("La edad debe estar entre 18 y 80 años")
             
             # Tasa de interés
-            if not (0 <= datos['tasa_interes'] <= 50):
+            if not (0 <= datos['tasa_interes'] <= 12):
                 errores.append("La tasa de interés debe estar entre 0% y 50%")
             
             # Porcentaje de pago
@@ -135,23 +135,23 @@ class PrediccionService:
                 errores.append("Los días de mora deben estar entre 0 y 365")
             
             # Plazo
-            if not (1 <= datos['plazo_credito_meses'] <= 60):
+            if not (1 <= datos['plazo_credito_meses'] <= 120):
                 errores.append("El plazo debe estar entre 1 y 60 meses")
             
             # Microseguros
-            if not (0 <= datos['num_microseguros'] <= 10):
+            if not (0 <= datos['num_microseguros'] <= 5):
                 errores.append("El número de microseguros debe estar entre 0 y 10")
             
             # Productos vigentes
-            if not (0 <= datos['n_productos_vigentes'] <= 20):
+            if not (0 <= datos['n_productos_vigentes'] <= 10):
                 errores.append("El número de productos vigentes debe estar entre 0 y 20")
             
             # Créditos vigentes
-            if not (0 <= datos['n_creditos_vigentes'] <= 10):
+            if not (0 <= datos['n_creditos_vigentes'] <= 5):
                 errores.append("El número de créditos vigentes debe estar entre 0 y 10")
             
             # Calidad de servicio
-            if not (1 <= datos['calidad_servicio'] <= 5):
+            if not (0 <= datos['calidad_servicio'] <= 100):
                 errores.append("La calidad de servicio debe estar entre 1 y 5")
             
             # Estado de ahorro (debe ser 0 o 1)

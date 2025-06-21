@@ -96,7 +96,48 @@
                     </div>
                 </div>
 
-                <!-- Removed static metrics section -->
+                <!-- Sección: Métricas del Modelo -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2">Métricas de Rendimiento</h2>
+                    <p class="text-gray-600 mb-6">Evaluación del desempeño del modelo de clasificación</p>
+                    
+                    <div id="metricsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Las métricas se cargarán dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Sección: ROC y Matriz de Confusión -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Curva ROC -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h2 class="text-xl font-semibold text-gray-900 mb-2">Curva ROC</h2>
+                        <p class="text-gray-600 mb-6">Rendimiento del modelo de clasificación</p>
+                        
+                        <div class="relative h-80">
+                            <canvas id="rocChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Matriz de Confusión -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h2 class="text-xl font-semibold text-gray-900 mb-2">Matriz de Confusión</h2>
+                        <p class="text-gray-600 mb-6">Precisión del modelo en conjunto de prueba</p>
+                        
+                        <div class="relative h-80">
+                            <canvas id="confusionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección: Función Sigmoide -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2">Función Sigmoide del Modelo</h2>
+                    <p class="text-gray-600 mb-6">Transformación de probabilidades del modelo logístico</p>
+                    
+                    <div class="relative h-80">
+                        <canvas id="sigmoidChart"></canvas>
+                    </div>
+                </div>
 
                 <div id="rocSection"></div>
                 <div id="confMatrixSection"></div>

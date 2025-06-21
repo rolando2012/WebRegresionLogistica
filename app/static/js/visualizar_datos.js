@@ -40,6 +40,10 @@ function initializeCharts() {
             createDesercionDistribution(data);
             createEstadoAhorroActivo(data);
             createVariableImportance(data);
+            createMetrics(data);
+            createROCCurve(data);
+            createConfusionMatrix(data);
+            createSigmoidFunction(data);
         })
         .catch(error => {
             console.error('Error al cargar los datos:', error);
@@ -153,18 +157,44 @@ function createEstadoAhorroActivo(data) {
 
     new Chart(ctx, {
         type: 'bar',
-        data: { labels: labels, datasets: [{ label: 'Clientes', data: values, backgroundColor: [ colors.primary, colors.orange ], borderRadius: 8, borderSkipped: false }] },
+        data: { 
+            labels: labels, 
+            datasets: [{ 
+                label: 'Clientes', 
+                data: values, 
+                backgroundColor: [colors.primary, colors.orange], 
+                borderRadius: 8, 
+                borderSkipped: false 
+            }] 
+        },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                x: { title: { display: true, text: 'estado_ahorro_activo', font: { size: 14, weight: '500' }, color: '#374151' }, grid: { display: false }, ticks: { font: { weight: '500', size: 14 } } },
-                y: { title: { display: true, text: 'Cuentas', font: { size: 14, weight: '500' }, color: '#374151' }, beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { callback: v => v.toLocaleString(), font: { size: 12 } } }
+                x: { 
+                    title: { display: true, text: 'estado_ahorro_activo', font: { size: 14, weight: '500' }, color: '#374151' }, 
+                    grid: { display: false }, 
+                    ticks: { font: { weight: '500', size: 14 } } 
+                },
+                y: { 
+                    title: { display: true, text: 'Cuentas', font: { size: 14, weight: '500' }, color: '#374151' }, 
+                    beginAtZero: true, 
+                    grid: { color: 'rgba(0,0,0,0.05)' }, 
+                    ticks: { callback: v => v.toLocaleString(), font: { size: 12 } } 
+                }
             },
-            plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'end', font: { weight: '600', size: 12 }, formatter: v => v.toLocaleString(), color: '#374151' } },
+            plugins: { 
+                legend: { display: false }, 
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `Clientes: ${context.parsed.y.toLocaleString()}`;
+                        }
+                    }
+                }
+            },
             animation: { duration: 1500, easing: 'easeInOutQuart' }
-        },
-        plugins: [ ChartDataLabels ]
+        }
     });
 }
 
@@ -193,7 +223,18 @@ function createVariableImportance(data) {
     }
 
     const sortedData = importanceArray.sort((a, b) => b.abs_coef - a.abs_coef).slice(0, 8);
-    const variableNames = { 'calidad_servicio': 'Calidad del Servicio', 'tasa_interes': 'Tasa de Interés', 'estado_ahorro_activo': 'Estado Ahorro Activo', 'n_productos_vigentes': 'N° Productos Vigentes', 'edad': 'Edad', 'porcentaje_pago': 'Porcentaje de Pago', 'n_creditos_vigentes': 'N° Créditos Vigentes', 'plazo_credito_meses': 'Plazo Crédito (meses)', 'dias_de_mora': 'Días de Mora', 'num_microseguros': 'N° Microseguros' };
+    const variableNames = { 
+        'calidad_servicio': 'Calidad del Servicio', 
+        'tasa_interes': 'Tasa de Interés', 
+        'estado_ahorro_activo': 'Estado Ahorro Activo', 
+        'n_productos_vigentes': 'N° Productos Vigentes', 
+        'edad': 'Edad', 
+        'porcentaje_pago': 'Porcentaje de Pago', 
+        'n_creditos_vigentes': 'N° Créditos Vigentes', 
+        'plazo_credito_meses': 'Plazo Crédito (meses)', 
+        'dias_de_mora': 'Días de Mora', 
+        'num_microseguros': 'N° Microseguros' 
+    };
     const labels = sortedData.map(item => variableNames[item.variable] || item.variable);
     const values = sortedData.map(item => item.abs_coef);
 
@@ -203,11 +244,438 @@ function createVariableImportance(data) {
     });
 
     new Chart(ctx, {
-        type: 'bar', data: { labels: labels, datasets: [{ label: 'Coeficiente Absoluto', data: values, backgroundColor: backgroundColors, borderColor: colors.primary, borderWidth: 1, borderRadius: 6, borderSkipped: false }] },
+        type: 'bar', 
+        data: { 
+            labels: labels, 
+            datasets: [{ 
+                label: 'Coeficiente Absoluto', 
+                data: values, 
+                backgroundColor: backgroundColors, 
+                borderColor: colors.primary, 
+                borderWidth: 1, 
+                borderRadius: 6, 
+                borderSkipped: false 
+            }] 
+        },
         options: {
-            responsive: true, maintainAspectRatio: false, indexAxis: 'y',
-            scales: { x: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.05)' }, ticks: { callback: v => v.toFixed(2), font: { size: 12 } } }, y: { grid: { display: false }, ticks: { font: { size: 11, weight: '500' } } } },
-            plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(context) { const item = sortedData[context.dataIndex]; return [`Coeficiente Absoluto: ${item.abs_coef.toFixed(3)}`, `Coeficiente: ${item.coeficiente.toFixed(3)}`, `Odds Ratio: ${item.odds_ratio.toFixed(3)}`]; } } } },
+            responsive: true, 
+            maintainAspectRatio: false, 
+            indexAxis: 'y',
+            scales: { 
+                x: { 
+                    beginAtZero: true, 
+                    grid: { color: 'rgba(0, 0, 0, 0.05)' }, 
+                    ticks: { callback: v => v.toFixed(2), font: { size: 12 } } 
+                }, 
+                y: { 
+                    grid: { display: false }, 
+                    ticks: { font: { size: 11, weight: '500' } } 
+                } 
+            },
+            plugins: { 
+                legend: { display: false }, 
+                tooltip: { 
+                    callbacks: { 
+                        label: function(context) { 
+                            const item = sortedData[context.dataIndex]; 
+                            return [
+                                `Coeficiente Absoluto: ${item.abs_coef.toFixed(3)}`, 
+                                `Coeficiente: ${item.coeficiente.toFixed(3)}`, 
+                                `Odds Ratio: ${item.odds_ratio.toFixed(3)}`
+                            ]; 
+                        } 
+                    } 
+                } 
+            },
+            animation: { duration: 1500, easing: 'easeInOutQuart' }
+        }
+    });
+}
+
+// 4. Crear Métricas del Modelo
+function createMetrics(data) {
+    const metricsContainer = document.getElementById('metricsContainer');
+    if (!metricsContainer) return;
+
+    const metrics = data.metrics || {};
+    const cmData = data.cmData || {};
+    const rocData = data.rocData || {};
+
+    const precision = (metrics.precision * 100).toFixed(1) || '0.0';
+    const recall = (metrics.recall * 100).toFixed(1) || '0.0';
+    const f1 = (metrics.f1 * 100).toFixed(1) || '0.0';
+    const auc = (rocData.auc * 100).toFixed(1) || '0.0';
+
+    metricsContainer.innerHTML = `
+        <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div class="text-right">
+                    <div class="text-3xl font-bold text-blue-600">${precision}%</div>
+                    <div class="text-sm text-blue-500 font-medium">Precisión</div>
+                </div>
+            </div>
+            <div class="text-sm text-gray-600">
+                Porcentaje de predicciones positivas correctas
+            </div>
+        </div>
+
+        <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <div class="text-right">
+                    <div class="text-3xl font-bold text-green-600">${recall}%</div>
+                    <div class="text-sm text-green-500 font-medium">Recall</div>
+                </div>
+            </div>
+            <div class="text-sm text-gray-600">
+                Porcentaje de casos positivos detectados
+            </div>
+        </div>
+
+        <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                </div>
+                <div class="text-right">
+                    <div class="text-3xl font-bold text-purple-600">${f1}%</div>
+                    <div class="text-sm text-purple-500 font-medium">F1-Score</div>
+                </div>
+            </div>
+            <div class="text-sm text-gray-600">
+                Media armónica de precisión y recall
+            </div>
+        </div>
+    `;
+}
+
+// 5. Crear Curva ROC
+function createROCCurve(data) {
+    const ctx = document.getElementById('rocChart');
+    if (!ctx) return;
+    
+    const context = ctx.getContext('2d');
+    const rocData = data.rocData || data.roc || {};
+    
+    if (!rocData.fpr || !rocData.tpr) return;
+
+    const fpr = rocData.fpr;
+    const tpr = rocData.tpr;
+    const auc = rocData.auc || 0;
+
+    // Crear datos para la línea diagonal (clasificador aleatorio)
+    const diagonalData = fpr.map(x => ({ x: x, y: x }));
+    const rocPoints = fpr.map((x, i) => ({ x: x, y: tpr[i] }));
+
+    new Chart(context, {
+        type: 'line',
+        data: {
+            datasets: [{
+                label: `ROC Curve (AUC = ${auc.toFixed(3)})`,
+                data: rocPoints,
+                borderColor: colors.primary,
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                fill: false,
+                borderWidth: 3,
+                pointRadius: 0,
+                pointHoverRadius: 6,
+                tension: 0.1
+            }, {
+                label: 'Clasificador Aleatorio',
+                data: diagonalData,
+                borderColor: colors.orange,
+                borderDash: [5, 5],
+                fill: false,
+                borderWidth: 2,
+                pointRadius: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom',
+                    title: {
+                        display: true,
+                        text: 'Tasa de Falsos Positivos',
+                        font: { size: 14, weight: '500' },
+                        color: '#374151'
+                    },
+                    min: 0,
+                    max: 1,
+                    grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                    ticks: { font: { size: 12 } }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Tasa de Verdaderos Positivos',
+                        font: { size: 14, weight: '500' },
+                        color: '#374151'
+                    },
+                    min: 0,
+                    max: 1,
+                    grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                    ticks: { font: { size: 12 } }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        font: { size: 12, weight: '500' }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.dataset.label}: (${context.parsed.x.toFixed(3)}, ${context.parsed.y.toFixed(3)})`;
+                        }
+                    }
+                }
+            },
+            animation: { duration: 1500, easing: 'easeInOutQuart' }
+        }
+    });
+}
+
+// 6. Crear Matriz de Confusión
+function createConfusionMatrix(data) {
+    const ctx = document.getElementById('confusionChart');
+    if (!ctx) return;
+    
+    const context = ctx.getContext('2d');
+    const cmData = data.cmData || {};
+    const confusionMatrix = data.confusion_matrix || [];
+
+    // Extraer valores de la matriz de confusión
+    let TN, FP, FN, TP;
+    
+    if (cmData.TN !== undefined) {
+        TN = cmData.TN;
+        FP = cmData.FP;
+        FN = cmData.FN;
+        TP = cmData.TP;
+    } else if (confusionMatrix.length === 2) {
+        TN = confusionMatrix[0][0];
+        FP = confusionMatrix[0][1];
+        FN = confusionMatrix[1][0];
+        TP = confusionMatrix[1][1];
+    } else {
+        return;
+    }
+
+    // Crear datos para el heatmap usando gráfico de barras apiladas
+    const matrixData = [
+        { x: 'Fiel', y: 'Fiel', v: TN, label: 'Verdadero Negativo' },
+        { x: 'Fiel', y: 'Desertor', v: FN, label: 'Falso Negativo' },
+        { x: 'Desertor', y: 'Fiel', v: FP, label: 'Falso Positivo' },
+        { x: 'Desertor', y: 'Desertor', v: TP, label: 'Verdadero Positivo' }
+    ];
+
+    // Crear el gráfico como scatter plot personalizado
+    new Chart(context, {
+        type: 'scatter',
+        data: {
+            datasets: [{
+                label: 'Matriz de Confusión',
+                data: matrixData.map((item, index) => ({
+                    x: item.x === 'Fiel' ? 0 : 1,
+                    y: item.y === 'Fiel' ? 0 : 1,
+                    v: item.v,
+                    label: item.label
+                })),
+                backgroundColor: function(context) {
+                    const value = context.raw.v;
+                    const maxValue = Math.max(TN, FP, FN, TP);
+                    const intensity = value / maxValue;
+                    if ((context.raw.x === 0 && context.raw.y === 0) || (context.raw.x === 1 && context.raw.y === 1)) {
+                        return `rgba(34, 197, 94, ${0.3 + intensity * 0.7})`;
+                    } else {
+                        return `rgba(239, 68, 68, ${0.3 + intensity * 0.7})`;
+                    }
+                },
+                borderColor: '#ffffff',
+                borderWidth: 2,
+                pointRadius: 50,
+                pointHoverRadius: 55
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom',
+                    title: {
+                        display: true,
+                        text: 'Predicción',
+                        font: { size: 14, weight: '600' },
+                        color: '#374151'
+                    },
+                    min: -0.5,
+                    max: 1.5,
+                    ticks: {
+                        stepSize: 1,
+                        callback: function(value) {
+                            return value === 0 ? 'Fiel' : value === 1 ? 'Desertor' : '';
+                        },
+                        font: { size: 12, weight: '500' }
+                    },
+                    grid: { display: false }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Real',
+                        font: { size: 14, weight: '600' },
+                        color: '#374151'
+                    },
+                    min: -0.5,
+                    max: 1.5,
+                    ticks: {
+                        stepSize: 1,
+                        callback: function(value) {
+                            return value === 0 ? 'Fiel' : value === 1 ? 'Desertor' : '';
+                        },
+                        font: { size: 12, weight: '500' }
+                    },
+                    grid: { display: false }
+                }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        title: function() { return ''; },
+                        label: function(context) {
+                            const point = context.raw;
+                            return [
+                                point.label,
+                                `Valor: ${point.v}`
+                            ];
+                        }
+                    }
+                }
+            },
+            animation: { duration: 1500, easing: 'easeInOutQuart' }
+        },
+        plugins: [{
+            afterDatasetsDraw: function(chart) {
+                const ctx = chart.ctx;
+                chart.data.datasets.forEach((dataset, i) => {
+                    const meta = chart.getDatasetMeta(i);
+                    meta.data.forEach((element, index) => {
+                        const data = dataset.data[index];
+                        const position = element.getCenterPoint();
+                        
+                        ctx.fillStyle = '#ffffff';
+                        ctx.font = 'bold 16px Inter';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(data.v, position.x, position.y);
+                    });
+                });
+            }
+        }]
+    });
+}
+
+// 7. Crear Función Sigmoide
+function createSigmoidFunction(data) {
+    const ctx = document.getElementById('sigmoidChart');
+    if (!ctx) return;
+    
+    const context = ctx.getContext('2d');
+    const sigmoidData = data.sigmoid || {};
+    
+    if (!sigmoidData.z || !sigmoidData.sigmoid) return;
+
+    const sigmoidPoints = sigmoidData.z.map((z, i) => ({
+        x: z,
+        y: sigmoidData.sigmoid[i]
+    }));
+
+    new Chart(context, {
+        type: 'line',
+        data: {
+            datasets: [{
+                label: 'Función Sigmoide',
+                data: sigmoidPoints,
+                borderColor: colors.purple,
+                backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                fill: true,
+                borderWidth: 3,
+                pointRadius: 0,
+                pointHoverRadius: 4,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom',
+                    title: {
+                        display: true,
+                        text: 'z (entrada del modelo)',
+                        font: { size: 14, weight: '500' },
+                        color: '#374151'
+                    },
+                    grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                    ticks: { font: { size: 12 } }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'σ(z) - Probabilidad',
+                        font: { size: 14, weight: '500' },
+                        color: '#374151'
+                    },
+                    min: 0,
+                    max: 1,
+                    grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                    ticks: { 
+                        font: { size: 12 },
+                        callback: function(value) {
+                            return value.toFixed(1);
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        padding: 20,
+                        font: { size: 12, weight: '500' }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `σ(${context.parsed.x.toFixed(2)}) = ${context.parsed.y.toFixed(4)}`;
+                        }
+                    }
+                }
+            },
             animation: { duration: 1500, easing: 'easeInOutQuart' }
         }
     });

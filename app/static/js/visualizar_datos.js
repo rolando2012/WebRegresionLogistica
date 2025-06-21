@@ -49,11 +49,13 @@ function initializeCharts() {
 
 // 1. Gráfico de Distribución de Deserción (Pie Chart mejorado)
 function createDesercionDistribution(data) {
-    const container = document.querySelector('.bg-gray-50.rounded-lg.p-8.text-center');
+    const container = document.querySelector('.bg-white.rounded-xl.shadow-sm.border.border-gray-200.p-6');
     if (!container) return;
+    const targetArea = container.querySelector('.bg-gray-50.rounded-lg.p-8.text-center');
+    if (!targetArea) return;
 
     // Reemplazar el contenido placeholder
-    container.innerHTML = `
+    targetArea.innerHTML = `
         <div class="relative h-96">
             <canvas id="desercionChart" width="400" height="400"></canvas>
             <div class="mt-4 grid grid-cols-2 gap-4 text-sm">
@@ -79,22 +81,17 @@ function createDesercionDistribution(data) {
 
     const ctx = document.getElementById('desercionChart').getContext('2d');
     const objCounts = data.obj_counts || data.target_counts || {};
-    
-    // Determinar las etiquetas y valores
     const labels = Object.keys(objCounts);
     const values = Object.values(objCounts);
     const total = values.reduce((a, b) => a + b, 0);
 
-    // Actualizar estadísticas
     if (labels.length >= 2) {
         const fielesIndex = labels.findIndex(l => l.toLowerCase().includes('fiel') || l === '0');
         const desertoresIndex = labels.findIndex(l => l.toLowerCase().includes('desertor') || l === '1');
-        
         if (fielesIndex !== -1) {
             document.getElementById('fielesCount').textContent = values[fielesIndex].toLocaleString();
             document.getElementById('fielesPercent').textContent = `${((values[fielesIndex] / total) * 100).toFixed(1)}%`;
         }
-        
         if (desertoresIndex !== -1) {
             document.getElementById('desertoresCount').textContent = values[desertoresIndex].toLocaleString();
             document.getElementById('desertoresPercent').textContent = `${((values[desertoresIndex] / total) * 100).toFixed(1)}%`;
@@ -121,22 +118,8 @@ function createDesercionDistribution(data) {
             maintainAspectRatio: false,
             cutout: '60%',
             plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        padding: 25,
-                        font: {
-                            size: 14,
-                            weight: '500'
-                        }
-                    }
-                },
+                legend: { position: 'bottom', labels: { padding: 25, font: { size: 14, weight: '500' } } },
                 tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    titleColor: 'white',
-                    bodyColor: 'white',
-                    borderColor: 'rgba(255, 255, 255, 0.1)',
-                    borderWidth: 1,
                     callbacks: {
                         label: function(context) {
                             const percentage = ((context.parsed / total) * 100).toFixed(1);
@@ -145,106 +128,52 @@ function createDesercionDistribution(data) {
                     }
                 }
             },
-            animation: {
-                animateRotate: true,
-                duration: 1500
-            }
+            animation: { animateRotate: true, duration: 1500 }
         }
     });
 }
 
 // 2. Gráfico de Estado Ahorro Activo (Bar Chart mejorado)
 function createEstadoAhorroActivo(data) {
-  const containers = document.querySelectorAll('.bg-gray-50.rounded-lg.p-8.text-center');
-  const categoryContainer = containers[1]; // Segundo contenedor
-  if (!categoryContainer) return;
+    const containers = Array.from(document.querySelectorAll('.bg-white.rounded-xl.shadow-sm.border.border-gray-200.p-6'));
+    if (containers.length < 2) return;
+    const categoryContainer = containers[1].querySelector('.bg-gray-50.rounded-lg.p-8.text-center');
+    if (!categoryContainer) return;
 
-  categoryContainer.innerHTML = `
-    <div class="relative h-96">
-      <canvas id="categoryChart"></canvas>
-    </div>
-  `;
+    categoryContainer.innerHTML = `
+        <div class="relative h-96">
+            <canvas id="categoryChart"></canvas>
+        </div>
+    `;
 
-  const ctx = document.getElementById('categoryChart').getContext('2d');
+    const ctx = document.getElementById('categoryChart').getContext('2d');
+    const counts = data.cat_counts?.estado_ahorro_activo || { '0': 0, '1': 0 };
+    const labels = ['0', '1'];
+    const values = [counts['0'] || 0, counts['1'] || 0];
 
-  // Sacamos los datos
-  const counts = data.cat_counts?.estado_ahorro_activo || { '0': 0, '1': 0 };
-  const labels = ['0', '1'];
-  const values = [counts['0'] || 0, counts['1'] || 0];
-
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Clientes',
-        data: values,
-        backgroundColor: [ colors.primary, colors.orange ],
-        borderRadius: 8,
-        borderSkipped: false,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        x: {
-          title: {
-          display: true,
-          text: 'estado_ahorro_activo',        // etiqueta para eje X
-          font: {
-            size: 14,
-            weight: '500'
-          },
-          color: '#374151'
+    new Chart(ctx, {
+        type: 'bar',
+        data: { labels: labels, datasets: [{ label: 'Clientes', data: values, backgroundColor: [ colors.primary, colors.orange ], borderRadius: 8, borderSkipped: false }] },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: { title: { display: true, text: 'estado_ahorro_activo', font: { size: 14, weight: '500' }, color: '#374151' }, grid: { display: false }, ticks: { font: { weight: '500', size: 14 } } },
+                y: { title: { display: true, text: 'Cuentas', font: { size: 14, weight: '500' }, color: '#374151' }, beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { callback: v => v.toLocaleString(), font: { size: 12 } } }
+            },
+            plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'end', font: { weight: '600', size: 12 }, formatter: v => v.toLocaleString(), color: '#374151' } },
+            animation: { duration: 1500, easing: 'easeInOutQuart' }
         },
-          grid: { display: false },
-          ticks: { font: { weight: '500', size: 14 } }
-        },
-        y: {
-          title: {
-          display: true,
-          text: 'Cuentas',         // etiqueta para eje Y
-          font: {
-            size: 14,
-            weight: '500'
-          },
-          color: '#374151'
-        },
-          beginAtZero: true,
-          grid: { color: 'rgba(0,0,0,0.05)' },
-          ticks: {
-            callback: v => v.toLocaleString(),
-            font: { size: 12 }
-          }
-        }
-      },
-      plugins: {
-        legend: { display: false },
-        tooltip: { /* tu configuración existente */ },
-        datalabels: {
-          anchor: 'end',
-          align: 'end',
-          font: { weight: '600', size: 12 },
-          formatter: v => v.toLocaleString(),
-          color: '#374151'  // un gris oscuro para contraste
-        }
-      },
-      animation: {
-        duration: 1500,
-        easing: 'easeInOutQuart'
-      }
-    },
-    plugins: [ ChartDataLabels ]  // habilita el plugin
-  });
+        plugins: [ ChartDataLabels ]
+    });
 }
-
 
 // 3. Gráfico de Variables que más Afectan la Deserción
 function createVariableImportance(data) {
-    // Buscar un contenedor después de las métricas o crear uno nuevo
-    const metricsSection = document.querySelector('.grid.grid-cols-2.md\\:grid-cols-4.gap-6').parentElement;
-    
+    // Seleccionar contenedor principal de visualización
+    const mainContainer = document.querySelector('.space-y-8');
+    if (!mainContainer) return;
+
     const importanceSection = document.createElement('div');
     importanceSection.className = 'bg-white rounded-xl shadow-sm border border-gray-200 p-6 mt-8';
     importanceSection.innerHTML = `
@@ -254,127 +183,32 @@ function createVariableImportance(data) {
             <canvas id="importanceChart"></canvas>
         </div>
     `;
-    
-    metricsSection.parentElement.appendChild(importanceSection);
+    mainContainer.appendChild(importanceSection);
 
     const ctx = document.getElementById('importanceChart').getContext('2d');
-    
-    // Procesar datos de variable_importance
-    let importanceArray = data.variable_importance || [];
-    
-    // Si no hay datos, mostrar error
+    const importanceArray = data.variable_importance || [];
     if (importanceArray.length === 0) {
-        importanceSection.innerHTML = `
-            <h2 class="text-xl font-semibold text-gray-900 mb-2">Variables con Mayor Impacto en Deserción</h2>
-            <div class="text-center py-8">
-                <p class="text-gray-500">No se encontraron datos de importancia de variables</p>
-            </div>
-        `;
+        importanceSection.innerHTML += `<div class="text-center py-8"><p class="text-gray-500">No se encontraron datos de importancia de variables</p></div>`;
         return;
     }
 
-    // Ordenar por coeficiente absoluto (abs_coef) de mayor a menor
-    const sortedData = importanceArray
-        .sort((a, b) => b.abs_coef - a.abs_coef)
-        .slice(0, 8); // Top 8 variables
-
-    // Traducir nombres de variables a español
-    const variableNames = {
-        'calidad_servicio': 'Calidad del Servicio',
-        'tasa_interes': 'Tasa de Interés',
-        'estado_ahorro_activo': 'Estado Ahorro Activo',
-        'n_productos_vigentes': 'N° Productos Vigentes',
-        'edad': 'Edad',
-        'porcentaje_pago': 'Porcentaje de Pago',
-        'n_creditos_vigentes': 'N° Créditos Vigentes',
-        'plazo_credito_meses': 'Plazo Crédito (meses)',
-        'dias_de_mora': 'Días de Mora',
-        'num_microseguros': 'N° Microseguros'
-    };
-
-    const labels = sortedData.map(item => 
-        variableNames[item.variable] || item.variable
-    );
+    const sortedData = importanceArray.sort((a, b) => b.abs_coef - a.abs_coef).slice(0, 8);
+    const variableNames = { 'calidad_servicio': 'Calidad del Servicio', 'tasa_interes': 'Tasa de Interés', 'estado_ahorro_activo': 'Estado Ahorro Activo', 'n_productos_vigentes': 'N° Productos Vigentes', 'edad': 'Edad', 'porcentaje_pago': 'Porcentaje de Pago', 'n_creditos_vigentes': 'N° Créditos Vigentes', 'plazo_credito_meses': 'Plazo Crédito (meses)', 'dias_de_mora': 'Días de Mora', 'num_microseguros': 'N° Microseguros' };
+    const labels = sortedData.map(item => variableNames[item.variable] || item.variable);
     const values = sortedData.map(item => item.abs_coef);
 
-    // Crear gradiente de colores basado en la importancia
     const backgroundColors = labels.map((_, i) => {
         const intensity = 0.8 - (i / labels.length) * 0.4;
         return `rgba(59, 130, 246, ${intensity})`;
     });
 
     new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Coeficiente Absoluto',
-                data: values,
-                backgroundColor: backgroundColors,
-                borderColor: colors.primary,
-                borderWidth: 1,
-                borderRadius: 6,
-                borderSkipped: false,
-            }]
-        },
+        type: 'bar', data: { labels: labels, datasets: [{ label: 'Coeficiente Absoluto', data: values, backgroundColor: backgroundColors, borderColor: colors.primary, borderWidth: 1, borderRadius: 6, borderSkipped: false }] },
         options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            indexAxis: 'y',
-            scales: {
-                x: {
-                    beginAtZero: true,
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.05)'
-                    },
-                    ticks: {
-                        callback: function(value) {
-                            return value.toFixed(2);
-                        },
-                        font: {
-                            size: 12
-                        }
-                    }
-                },
-                y: {
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        font: {
-                            size: 11,
-                            weight: '500'
-                        }
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    titleColor: 'white',
-                    bodyColor: 'white',
-                    borderColor: 'rgba(255, 255, 255, 0.1)',
-                    borderWidth: 1,
-                    callbacks: {
-                        label: function(context) {
-                            const dataIndex = context.dataIndex;
-                            const item = sortedData[dataIndex];
-                            return [
-                                `Coeficiente Absoluto: ${item.abs_coef.toFixed(3)}`,
-                                `Coeficiente: ${item.coeficiente.toFixed(3)}`,
-                                `Odds Ratio: ${item.odds_ratio.toFixed(3)}`
-                            ];
-                        }
-                    }
-                }
-            },
-            animation: {
-                duration: 1500,
-                easing: 'easeInOutQuart'
-            }
+            responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+            scales: { x: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.05)' }, ticks: { callback: v => v.toFixed(2), font: { size: 12 } } }, y: { grid: { display: false }, ticks: { font: { size: 11, weight: '500' } } } },
+            plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(context) { const item = sortedData[context.dataIndex]; return [`Coeficiente Absoluto: ${item.abs_coef.toFixed(3)}`, `Coeficiente: ${item.coeficiente.toFixed(3)}`, `Odds Ratio: ${item.odds_ratio.toFixed(3)}`]; } } } },
+            animation: { duration: 1500, easing: 'easeInOutQuart' }
         }
     });
 }
@@ -399,7 +233,6 @@ function showError() {
 
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
-    // Cargar Chart.js si no está disponible
     if (typeof Chart === 'undefined') {
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js';

@@ -86,9 +86,9 @@
                         <!-- Tasa de Interés -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Tasa de Interés (%)</label>
-                            <input type="number" id="tasa_interes" name="tasa_interes" min="0" max="50" step="0.1"
+                            <input type="number" id="tasa_interes" name="tasa_interes" min="0" max="11.5" step="0.1"
                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" 
-                                   placeholder="0 - 50" required>
+                                   placeholder="0 - 11.5" required>
                         </div>
 
                         <!-- Porcentaje de Pago -->
@@ -109,42 +109,42 @@
 
                         <!-- Plazo -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Plazo (meses)</label>
-                            <input type="number" id="plazo_credito_meses" name="plazo_credito_meses" min="1" max="60"
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Plazo de credito (meses)</label>
+                            <input type="number" id="plazo_credito_meses" name="plazo_credito_meses" min="1" max="120"
                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" 
-                                   placeholder="1 - 60" required>
+                                   placeholder="1 - 120" required>
                         </div>
 
                         <!-- Número de Microseguros -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Número de Microseguros (productos)</label>
-                            <input type="number" id="num_microseguros" name="num_microseguros" min="0" max="10"
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Número de Microseguros </label>
+                            <input type="number" id="num_microseguros" name="num_microseguros" min="0" max="5"
                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" 
-                                   placeholder="0 - 10" required>
+                                   placeholder="0 - 5" required>
                         </div>
 
                         <!-- Productos Vigentes -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Productos Vigentes (productos)</label>
-                            <input type="number" id="n_productos_vigentes" name="n_productos_vigentes" min="0" max="20"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" 
-                                   placeholder="0 - 20" required>
-                        </div>
-
-                        <!-- Créditos Vigentes -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Créditos Vigentes (créditos)</label>
-                            <input type="number" id="n_creditos_vigentes" name="n_creditos_vigentes" min="0" max="10"
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Numero de Productos Vigentes</label>
+                            <input type="number" id="n_productos_vigentes" name="n_productos_vigentes" min="0" max="10"
                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" 
                                    placeholder="0 - 10" required>
                         </div>
 
+                        <!-- Créditos Vigentes -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Numero de Créditos Vigentes</label>
+                            <input type="number" id="n_creditos_vigentes" name="n_creditos_vigentes" min="0" max="5"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" 
+                                   placeholder="0 - 5" required>
+                        </div>
+
                         <!-- Calidad de Servicio -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Calidad de Servicio (escala)</label>
-                            <input type="number" id="calidad_servicio" name="calidad_servicio" min="1" max="5" step="0.1"
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Calidad de Servicio (%)</label>
+                            <input type="number" id="calidad_servicio" name="calidad_servicio" min="1" max="100" step="0.1"
                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" 
-                                   placeholder="1 - 5" required>
+                                   placeholder="1 - 100" required>
                         </div>
 
                         <!-- Estado de Ahorro -->

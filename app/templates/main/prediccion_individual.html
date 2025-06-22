@@ -206,8 +206,14 @@
                         <!-- Gráfico -->
                         <div class="mb-6">
                             <h3 class="text-lg font-medium text-gray-900 mb-3">Posición en Curva Logística</h3>
-                            <div class="bg-gray-50 rounded-lg p-4">
-                                <canvas id="graficoSigmoide" width="400" height="200"></canvas>
+                            <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+                                <div class="relative">
+                                    <canvas id="graficoSigmoide" width="500" height="300"></canvas>
+                                    <!-- Tooltip -->
+                                    <div id="tooltip" class="absolute bg-gray-800 text-white px-3 py-2 rounded-lg text-sm opacity-0 pointer-events-none transition-opacity duration-200 z-10">
+                                        <div id="tooltipContent"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -323,87 +329,272 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function dibujarGraficoSigmoide(resultado) {
-        const canvas = document.getElementById('graficoSigmoide');
-        const ctx = canvas.getContext('2d');
-        
-        // Limpiar canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // Configuración
-        const width = canvas.width;
-        const height = canvas.height;
-        const padding = 40;
-        const plotWidth = width - 2 * padding;
-        const plotHeight = height - 2 * padding;
-        
-        // Rango de z (score lineal)
-        const zMin = resultado.z_score - 3;
-        const zMax = resultado.z_score + 3;
-        
-        // Función para convertir coordenadas
-        function toPixelX(z) {
-            return padding + ((z - zMin) / (zMax - zMin)) * plotWidth;
-        }
-        
-        function toPixelY(prob) {
-            return height - padding - prob * plotHeight;
-        }
-        
-        // Dibujar curva sigmoide
-        ctx.beginPath();
-        ctx.strokeStyle = '#9CA3AF';
-        ctx.lineWidth = 2;
-        
-        for (let i = 0; i <= plotWidth; i++) {
-            const z = zMin + (i / plotWidth) * (zMax - zMin);
-            const prob = 1 / (1 + Math.exp(-z));
-            const x = padding + i;
-            const y = toPixelY(prob);
-            
-            if (i === 0) {
-                ctx.moveTo(x, y);
-            } else {
-                ctx.lineTo(x, y);
-            }
-        }
-        ctx.stroke();
-        
-        // Dibujar punto del cliente
-        const clienteX = toPixelX(resultado.z_score);
-        const clienteY = toPixelY(resultado.probabilidad);
-        
-        ctx.beginPath();
-        ctx.arc(clienteX, clienteY, 6, 0, 2 * Math.PI);
-        ctx.fillStyle = '#F97316';
-        ctx.fill();
-        
-        // Dibujar ejes
-        ctx.beginPath();
-        ctx.strokeStyle = '#6B7280';
-        ctx.lineWidth = 1;
-        
-        // Eje X
-        ctx.moveTo(padding, height - padding);
-        ctx.lineTo(width - padding, height - padding);
-        
-        // Eje Y
-        ctx.moveTo(padding, padding);
-        ctx.lineTo(padding, height - padding);
-        ctx.stroke();
-        
-        // Etiquetas
-        ctx.fillStyle = '#6B7280';
-        ctx.font = '12px Arial';
-        ctx.textAlign = 'center';
-        
-        // Etiquetas del eje Y
-        ctx.textAlign = 'right';
-        ctx.fillText('0', padding - 5, height - padding + 4);
-        ctx.fillText('25', padding - 5, toPixelY(0.25) + 4);
-        ctx.fillText('50', padding - 5, toPixelY(0.5) + 4);
-        ctx.fillText('75', padding - 5, toPixelY(0.75) + 4);
-        ctx.fillText('100', padding - 5, toPixelY(1) + 4);
+    const canvas = document.getElementById('graficoSigmoide');
+    const ctx = canvas.getContext('2d');
+    const tooltip = document.getElementById('tooltip');
+    
+    // Limpiar canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Configuración mejorada
+    const width = canvas.width;
+    const height = canvas.height;
+    const padding = 60;
+    const plotWidth = width - 2 * padding;
+    const plotHeight = height - 2 * padding;
+    
+    // Rango de z (score lineal) más amplio
+    const zRange = 6;
+    const zMin = -zRange;
+    const zMax = zRange;
+    
+    // Función para convertir coordenadas
+    function toPixelX(z) {
+        return padding + ((z - zMin) / (zMax - zMin)) * plotWidth;
     }
-});
+    
+    function toPixelY(prob) {
+        return height - padding - prob * plotHeight;
+    }
+    
+    // Función sigmoide
+    function sigmoid(z) {
+        return 1 / (1 + Math.exp(-z));
+    }
+    
+    // Dibujar grid de fondo
+    ctx.strokeStyle = '#F3F4F6';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([2, 2]);
+    
+    // Grid vertical
+    for (let i = 0; i <= 10; i++) {
+        const x = padding + (i / 10) * plotWidth;
+        ctx.beginPath();
+        ctx.moveTo(x, padding);
+        ctx.lineTo(x, height - padding);
+        ctx.stroke();
+    }
+    
+    // Grid horizontal
+    for (let i = 0; i <= 10; i++) {
+        const y = padding + (i / 10) * plotHeight;
+        ctx.beginPath();
+        ctx.moveTo(padding, y);
+        ctx.lineTo(width - padding, y);
+        ctx.stroke();
+    }
+    
+    ctx.setLineDash([]);
+    
+    // Dibujar ejes principales
+    ctx.strokeStyle = '#9CA3AF';
+    ctx.lineWidth = 2;
+    
+    // Eje X
+    ctx.beginPath();
+    ctx.moveTo(padding, height - padding);
+    ctx.lineTo(width - padding, height - padding);
+    ctx.stroke();
+    
+    // Eje Y
+    ctx.beginPath();
+    ctx.moveTo(padding, padding);
+    ctx.lineTo(padding, height - padding);
+    ctx.stroke();
+    
+    // Dibujar curva sigmoide con gradiente
+    const gradient = ctx.createLinearGradient(0, 0, 0, height);
+    gradient.addColorStop(0, '#8B5CF6');
+    gradient.addColorStop(1, '#A78BFA');
+    
+    ctx.beginPath();
+    ctx.strokeStyle = gradient;
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    
+    const steps = 200;
+    for (let i = 0; i <= steps; i++) {
+        const z = zMin + (i / steps) * (zMax - zMin);
+        const prob = sigmoid(z);
+        const x = toPixelX(z);
+        const y = toPixelY(prob);
+        
+        if (i === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            ctx.lineTo(x, y);
+        }
+    }
+    ctx.stroke();
+    
+    // Dibujar zonas de riesgo
+    ctx.globalAlpha = 0.1;
+    
+    // Zona verde (bajo riesgo)
+    ctx.fillStyle = '#10B981';
+    ctx.fillRect(padding, toPixelY(0.3), plotWidth, toPixelY(0) - toPixelY(0.3));
+    
+    // Zona amarilla (riesgo medio)
+    ctx.fillStyle = '#F59E0B';
+    ctx.fillRect(padding, toPixelY(0.7), plotWidth, toPixelY(0.3) - toPixelY(0.7));
+    
+    // Zona roja (alto riesgo)
+    ctx.fillStyle = '#EF4444';
+    ctx.fillRect(padding, padding, plotWidth, toPixelY(0.7) - padding);
+    
+    ctx.globalAlpha = 1;
+    
+    // Etiquetas de riesgo
+    ctx.fillStyle = '#6B7280';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'right';
+    
+    ctx.fillText('Alto Riesgo', width - padding - 10, padding + 20);
+    ctx.fillText('Riesgo Medio', width - padding - 10, toPixelY(0.5) + 5);
+    ctx.fillText('Bajo Riesgo', width - padding - 10, height - padding - 10);
+    
+    // Dibujar líneas de referencia
+    ctx.strokeStyle = '#E5E7EB';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([5, 5]);
+    
+    // Líneas horizontales de probabilidad
+    const probLines = [0.25, 0.5, 0.75];
+    probLines.forEach(prob => {
+        const y = toPixelY(prob);
+        ctx.beginPath();
+        ctx.moveTo(padding, y);
+        ctx.lineTo(width - padding, y);
+        ctx.stroke();
+    });
+    
+    ctx.setLineDash([]);
+    
+    // Dibujar punto del cliente con animación
+    const clienteX = toPixelX(resultado.z_score);
+    const clienteY = toPixelY(resultado.probabilidad);
+    
+    // Círculo exterior (efecto de pulso)
+    ctx.beginPath();
+    ctx.arc(clienteX, clienteY, 12, 0, 2 * Math.PI);
+    ctx.fillStyle = 'rgba(249, 115, 22, 0.3)';
+    ctx.fill();
+    
+    // Círculo principal
+    ctx.beginPath();
+    ctx.arc(clienteX, clienteY, 8, 0, 2 * Math.PI);
+    ctx.fillStyle = '#F97316';
+    ctx.fill();
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Líneas de referencia al punto
+    ctx.strokeStyle = '#F97316';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([3, 3]);
+    
+    // Línea vertical
+    ctx.beginPath();
+    ctx.moveTo(clienteX, height - padding);
+    ctx.lineTo(clienteX, clienteY);
+    ctx.stroke();
+    
+    // Línea horizontal
+    ctx.beginPath();
+    ctx.moveTo(padding, clienteY);
+    ctx.lineTo(clienteX, clienteY);
+    ctx.stroke();
+    
+    ctx.setLineDash([]);
+    
+    // Etiquetas de los ejes
+    ctx.fillStyle = '#374151';
+    ctx.font = 'bold 14px Arial';
+    ctx.textAlign = 'center';
+    
+    // Título del eje Y
+    ctx.save();
+    ctx.translate(20, height / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('Probabilidad de Deserción (%)', 0, 0);
+    ctx.restore();
+    
+    // Título del eje X
+    ctx.fillText('Score Logístico', width / 2, height - 20);
+    
+    // Etiquetas del eje Y
+    ctx.fillStyle = '#6B7280';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'right';
+    
+    const yLabels = [0, 25, 50, 75, 100];
+    yLabels.forEach(label => {
+        const y = toPixelY(label / 100);
+        ctx.fillText(label + '%', padding - 10, y + 4);
+    });
+    
+    // Etiquetas del eje X
+    ctx.textAlign = 'center';
+    const xLabels = [-6, -3, 0, 3, 6];
+    xLabels.forEach(label => {
+        const x = toPixelX(label);
+        ctx.fillText(label.toString(), x, height - padding + 20);
+    });
+    
+    // Mostrar valores del cliente
+    ctx.fillStyle = '#1F2937';
+    ctx.font = 'bold 14px Arial';
+    ctx.textAlign = 'left';
+    
+    const probPercent = Math.round(resultado.probabilidad * 100);
+    const infoText = `Probabilidad: ${probPercent}%`;
+    
+    // Fondo para el texto
+    const textWidth = ctx.measureText(infoText).width;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.fillRect(padding + 10, padding + 10, textWidth + 20, 30);
+    ctx.strokeStyle = '#E5E7EB';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(padding + 10, padding + 10, textWidth + 20, 30);
+    
+    // Texto
+    ctx.fillStyle = '#1F2937';
+    ctx.fillText(infoText, padding + 20, padding + 30);
+    
+    // Agregar interactividad
+    canvas.addEventListener('mousemove', function(e) {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        
+        // Verificar si el mouse está sobre el punto del cliente
+        const distancia = Math.sqrt(Math.pow(mouseX - clienteX, 2) + Math.pow(mouseY - clienteY, 2));
+        
+        if (distancia <= 12) {
+            tooltip.style.opacity = '1';
+            tooltip.style.left = (e.clientX + 10) + 'px';
+            tooltip.style.top = (e.clientY - 40) + 'px';
+            
+            const tooltipContent = document.getElementById('tooltipContent');
+            tooltipContent.innerHTML = `
+                <div class="font-medium">Cliente Actual</div>
+                <div>Probabilidad: ${probPercent}%</div>
+                <div>Score: ${resultado.z_score.toFixed(2)}</div>
+            `;
+            
+            canvas.style.cursor = 'pointer';
+        } else {
+            tooltip.style.opacity = '0';
+            canvas.style.cursor = 'default';
+        }
+    });
+    
+    canvas.addEventListener('mouseleave', function() {
+        tooltip.style.opacity = '0';
+        canvas.style.cursor = 'default';
+    });
+}});
 </script>
 {% endblock %}

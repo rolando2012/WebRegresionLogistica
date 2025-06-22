@@ -578,28 +578,79 @@ function procesarDatos() {
         return;
     }
     
-    // Mostrar loading
+    // Mostrar loading con progreso
+    let progress = 0;
+    const progressInterval = setInterval(() => {
+        progress += Math.random() * 15;
+        if (progress > 90) progress = 90;
+        
+        Swal.update({
+            title: 'Procesando datos...',
+            text: `Analizando ${totalRecords} registros - ${Math.round(progress)}%`,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+    }, 200);
+    
+    // Inicializar SweetAlert
     Swal.fire({
         title: 'Procesando datos...',
-        text: `Analizando ${totalRecords} registros`,
+        text: `Analizando ${totalRecords} registros - 0%`,
         allowOutsideClick: false,
         didOpen: () => {
             Swal.showLoading();
         }
     });
     
-    // Simular procesamiento (aquí enviarías al servidor)
-    setTimeout(() => {
+    
+    // Enviar datos al servidor
+    fetch('/api/procesar-lote', {
+        method: 'POST',
+        credentials: 'include',  
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            csv_data: csvData
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        clearInterval(progressInterval);
+        
+        if (data.success) {
+            Swal.fire({
+                title: '¡Procesamiento completo!',
+                text: data.message,
+                icon: 'success',
+                confirmButtonColor: '#1f2937',
+                confirmButtonText: 'Ver Resultados'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = data.redirect_url;
+                }
+            });
+        } else {
+            Swal.fire({
+                title: 'Error en el procesamiento',
+                text: data.error,
+                icon: 'error',
+                confirmButtonColor: '#1f2937'
+            });
+        }
+    })
+    .catch(error => {
+        clearInterval(progressInterval);
+        console.error('Error:', error);
         Swal.fire({
-            title: '¡Procesamiento completo!',
-            text: `Se procesaron ${totalRecords} registros exitosamente.`,
-            icon: 'success',
+            title: 'Error de conexión',
+            text: 'Hubo un problema al procesar los datos. Inténtalo de nuevo.',
+            icon: 'error',
             confirmButtonColor: '#1f2937'
         });
-        
-        // Aquí podrías redirigir a la página de resultados o mostrar los resultados
-        console.log('Datos procesados:', csvData);
-    }, 2000);
+    });
 }
+
 </script>
 {% endblock %}

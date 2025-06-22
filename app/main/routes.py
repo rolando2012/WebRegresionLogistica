@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, jsonify, request
+from flask import Blueprint, redirect, render_template, jsonify, request, url_for
 import json
 import os
 from flask import current_app
@@ -225,3 +225,56 @@ def corr_png():
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@main.route('/api/procesar-lote', methods=['POST'])
+def procesar_lote():
+    """API para procesar lote de datos CSV"""
+    try:
+        # Obtener datos del request
+        data = request.get_json()
+        
+        if not data or 'csv_data' not in data:
+            return jsonify({
+                'success': False,
+                'error': 'No se proporcionaron datos CSV'
+            }), 400
+        
+        # Importar el servicio
+        from app.services.prediccion_masiva_service import PrediccionMasivaService
+        
+        # Procesar datos
+        service = PrediccionMasivaService()
+        resultado = service.procesar_csv_data(data['csv_data'])
+        
+        if not resultado['success']:
+            return jsonify(resultado), 400
+        
+        # Guardar resultados en sesión para la página de resultados
+        from flask import session
+        session['resultados_prediccion'] = resultado
+        
+        
+        return jsonify({
+            'success': True,
+            'message': f'Se procesaron {resultado["total_procesados"]} registros exitosamente',
+            'redirect_url': url_for('main.resultados_masivos') 
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': f'Error procesando datos: {str(e)}'
+        }), 500
+
+@main.route('/resultados-masivos')
+def resultados_masivos():
+    """Página para mostrar resultados del análisis masivo"""
+    from flask import session
+    
+    resultados = session.get('resultados_prediccion')
+    if not resultados:
+        return redirect(url_for('main.analisis_masivo'))
+    
+    return render_template('main/resultados_masivos.html', 
+                         titulo="Resultados del Análisis", 
+                         resultados=resultados)

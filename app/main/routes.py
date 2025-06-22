@@ -252,7 +252,7 @@ def procesar_lote():
         # Guardar resultados en sesión para la página de resultados
         from flask import session
         session['resultados_prediccion'] = resultado
-        
+
         
         return jsonify({
             'success': True,
@@ -278,3 +278,222 @@ def resultados_masivos():
     return render_template('main/resultados_masivos.html', 
                          titulo="Resultados del Análisis", 
                          resultados=resultados)
+
+@main.route('/exportar-pdf')
+def exportar_pdf():
+    """Exportar resultados a PDF"""
+    try:
+        from flask import session
+        from reportlab.lib.pagesizes import letter, A4
+        from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
+        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+        from reportlab.lib.units import inch
+        from reportlab.lib import colors
+        from reportlab.graphics.shapes import Drawing
+        from reportlab.graphics.charts.piecharts import Pie
+        from reportlab.graphics.charts.linecharts import HorizontalLineChart
+        from reportlab.lib.colors import HexColor
+        import io
+        import base64
+        from datetime import datetime
+        
+        # Obtener resultados de la sesión
+        resultados = session.get('resultados_prediccion')
+        if not resultados:
+            return redirect(url_for('main.analisis_masivo'))
+        
+        # Crear buffer para el PDF
+        buffer = io.BytesIO()
+        
+        # Crear documento PDF
+        doc = SimpleDocTemplate(buffer, pagesize=A4,
+                              rightMargin=72, leftMargin=72,
+                              topMargin=72, bottomMargin=18)
+        
+        # Contenido del PDF
+        story = []
+        
+        # Estilos
+        styles = getSampleStyleSheet()
+        title_style = ParagraphStyle(
+            'CustomTitle',
+            parent=styles['Heading1'],
+            fontSize=24,
+            spaceAfter=30,
+            alignment=1,  # Centrado
+            textColor=colors.darkblue
+        )
+        
+        subtitle_style = ParagraphStyle(
+            'CustomSubtitle',
+            parent=styles['Heading2'],
+            fontSize=16,
+            spaceAfter=20,
+            textColor=colors.darkgreen
+        )
+        
+        # Título principal
+        story.append(Paragraph("REPORTE DE ANÁLISIS MASIVO", title_style))
+        story.append(Paragraph("Predicción de Deserción de Clientes Bancarios", styles['Heading3']))
+        story.append(Spacer(1, 12))
+        
+        # Información del reporte
+        fecha_actual = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        story.append(Paragraph(f"<b>Fecha de generación:</b> {fecha_actual}", styles['Normal']))
+        story.append(Paragraph(f"<b>Total de clientes analizados:</b> {resultados['estadisticas']['total_clientes']}", styles['Normal']))
+        story.append(Spacer(1, 20))
+        
+        # Resumen ejecutivo
+        story.append(Paragraph("RESUMEN EJECUTIVO", subtitle_style))
+        
+        # Tabla de estadísticas principales
+        stats_data = [
+            ['Métrica', 'Cantidad', 'Porcentaje'],
+            ['Total de Clientes', str(resultados['estadisticas']['total_clientes']), '100%'],
+            ['Clientes Fieles', str(resultados['estadisticas']['clientes_fieles']), 
+             f"{resultados['estadisticas']['pct_fieles']}%"],
+            ['Posibles Desertores', str(resultados['estadisticas']['posibles_desertores']), 
+             f"{resultados['estadisticas']['pct_desertores']}%"],
+            ['Clientes de Riesgo Alto', str(resultados['estadisticas']['riesgo_alto']), 
+             f"{round(resultados['estadisticas']['riesgo_alto'] / resultados['estadisticas']['total_clientes'] * 100, 1)}%"]
+        ]
+        
+        stats_table = Table(stats_data, colWidths=[2*inch, 1.5*inch, 1.5*inch])
+        stats_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 12),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 1), (-1, -1), 10),
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
+        ]))
+        
+        story.append(stats_table)
+        story.append(Spacer(1, 20))
+        
+        # Gráfico de distribución (simulado con tabla)
+        story.append(Paragraph("DISTRIBUCIÓN POR RIESGO", subtitle_style))
+        
+        pie_data = [
+            ['Estado del Cliente', 'Cantidad', 'Representación Visual'],
+            ['Clientes Fieles', str(resultados['datos_torta']['fieles']['cantidad']), 
+             '█' * int(resultados['datos_torta']['fieles']['porcentaje'] / 5) + f" ({resultados['datos_torta']['fieles']['porcentaje']}%)"],
+            ['Posibles Desertores', str(resultados['datos_torta']['desertores']['cantidad']), 
+             '█' * int(resultados['datos_torta']['desertores']['porcentaje'] / 5) + f" ({resultados['datos_torta']['desertores']['porcentaje']}%)"]
+        ]
+        
+        pie_table = Table(pie_data, colWidths=[2*inch, 1*inch, 3*inch])
+        pie_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 11),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (0, 1), colors.lightgreen),
+            ('BACKGROUND', (0, 2), (0, 2), colors.lightcoral),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 1), (-1, -1), 9),
+        ]))
+        
+        story.append(pie_table)
+        story.append(Spacer(1, 20))
+        
+        # Tabla de resultados detallados
+        story.append(Paragraph("RESULTADOS DETALLADOS", subtitle_style))
+        
+        # Preparar datos para la tabla (primeros 20 registros)
+        table_data = [['ID', 'Calidad Servicio', 'Tasa Interés', 'Edad', 'Probabilidad', 'Riesgo']]
+        
+        for i, cliente in enumerate(resultados['datos_detallados'][:20]):  # Mostrar solo primeros 20
+            table_data.append([
+                cliente['id'],
+                str(cliente['calidad_servicio']),
+                f"{cliente['tasa_interes']:.1f}%",
+                str(cliente['edad']),
+                f"{cliente['probabilidad']*100:.1f}%",
+                cliente['riesgo']
+            ])
+        
+        # Si hay más de 20 registros, agregar nota
+        if len(resultados['datos_detallados']) > 20:
+            table_data.append(['...', '...', '...', '...', '...', '...'])
+            table_data.append([f"Total: {len(resultados['datos_detallados'])} registros", '', '', '', '', ''])
+        
+        detail_table = Table(table_data, colWidths=[0.8*inch, 1.2*inch, 1*inch, 0.8*inch, 1*inch, 0.8*inch])
+        detail_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.navy),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 9),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 1), (-1, -1), 8),
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
+        ]))
+        
+        # Colorear filas según el riesgo
+        for i, cliente in enumerate(resultados['datos_detallados'][:20], 1):
+            if cliente['riesgo'] == 'ALTO':
+                detail_table.setStyle(TableStyle([
+                    ('BACKGROUND', (5, i), (5, i), colors.lightcoral),
+                ]))
+            else:
+                detail_table.setStyle(TableStyle([
+                    ('BACKGROUND', (5, i), (5, i), colors.lightgreen),
+                ]))
+        
+        story.append(detail_table)
+        story.append(Spacer(1, 20))
+        
+        # Conclusiones y recomendaciones
+        story.append(Paragraph("CONCLUSIONES Y RECOMENDACIONES", subtitle_style))
+        
+        conclusiones = [
+            f"• El análisis procesó {resultados['estadisticas']['total_clientes']} clientes con éxito.",
+            f"• {resultados['estadisticas']['clientes_fieles']} clientes ({resultados['estadisticas']['pct_fieles']}%) se clasifican como fieles.",
+            f"• {resultados['estadisticas']['posibles_desertores']} clientes ({resultados['estadisticas']['pct_desertores']}%) tienen alta probabilidad de deserción.",
+            f"• {resultados['estadisticas']['riesgo_alto']} clientes requieren atención inmediata por riesgo muy alto.",
+            "• Se recomienda implementar estrategias de retención para clientes de alto riesgo.",
+            "• Monitorear continuamente los indicadores de satisfacción del cliente.",
+            "• Desarrollar programas de fidelización personalizados."
+        ]
+        
+        for conclusion in conclusiones:
+            story.append(Paragraph(conclusion, styles['Normal']))
+            story.append(Spacer(1, 6))
+        
+        # Pie de página
+        story.append(Spacer(1, 30))
+        story.append(Paragraph("Reporte generado por Sistema de Predicción de Deserción", 
+                              ParagraphStyle('Footer', parent=styles['Normal'], 
+                                           fontSize=8, alignment=1, textColor=colors.grey)))
+        
+        # Construir PDF
+        doc.build(story)
+        
+        # Preparar respuesta
+        buffer.seek(0)
+        
+        from flask import make_response
+        response = make_response(buffer.read())
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = f'attachment; filename=reporte_prediccion_{datetime.now().strftime("%Y%m%d_%H%M%S")}.pdf'
+        
+        buffer.close()
+        
+        return response
+        
+    except Exception as e:
+        from flask import flash
+        flash(f'Error al generar PDF: {str(e)}', 'error')
+        return redirect(url_for('main.resultados_masivos'))

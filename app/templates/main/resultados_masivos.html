@@ -121,12 +121,12 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
                         </div>
-                        <button id="exportBtn" class="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors flex items-center space-x-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                            <span>Exportar CSV</span>
-                        </button>
+                        <a href="{{ url_for('main.exportar_pdf') }}" id="exportBtn" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                        <span>Exportar PDF</span>
+                    </a>
                     </div>
                 </div>
 
@@ -422,36 +422,6 @@ function sortTable(columnIndex) {
     }
 }
 
-// Funcionalidad de exportar CSV (placeholder)
-document.getElementById('exportBtn').addEventListener('click', function() {
-    // Por ahora solo muestra un mensaje
-    alert('Funcionalidad de exportación será implementada próximamente');
-    
-    // Código para exportar CSV (comentado para futura implementación)
-    /*
-    const table = document.getElementById('resultsTable');
-    const rows = table.querySelectorAll('tr');
-    let csvContent = '';
-    
-    rows.forEach(row => {
-        const cols = row.querySelectorAll('td, th');
-        const rowData = Array.from(cols).map(col => {
-            return '"' + col.textContent.trim().replace(/"/g, '""') + '"';
-        });
-        csvContent += rowData.join(',') + '\n';
-    });
-    
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.setAttribute('hidden', '');
-    a.setAttribute('href', url);
-    a.setAttribute('download', 'resultados_prediccion.csv');
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    */
-});
 
 // Inicialización adicional cuando se carga la página
 document.addEventListener('DOMContentLoaded', function() {

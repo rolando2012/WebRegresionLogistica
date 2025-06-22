@@ -44,13 +44,19 @@ function initializeCharts() {
             createROCCurve(data);
             createConfusionMatrix(data);
             createSigmoidFunction(data);
+            
+            // Cargar coeficientes por separado
+            return fetch('/api/coeficientes');
+        })
+        .then(response => response.json())
+        .then(coefData => {
+            createCoeficientesChart(coefData);
         })
         .catch(error => {
             console.error('Error al cargar los datos:', error);
             showError();
         });
 }
-
 // 1. Gráfico de Distribución de Deserción (Pie Chart mejorado)
 function createDesercionDistribution(data) {
     const container = document.querySelector('.bg-white.rounded-xl.shadow-sm.border.border-gray-200.p-6');
@@ -679,6 +685,115 @@ function createSigmoidFunction(data) {
             animation: { duration: 1500, easing: 'easeInOutQuart' }
         }
     });
+}
+
+// Función para crear el gráfico de coeficientes
+function createCoeficientesChart(data) {
+    const ctx = document.getElementById('coeficientesChart').getContext('2d');
+    
+    const labels = data.coeficientes.map(item => 
+        item.variable.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+    );
+    const valores = data.coeficientes.map(item => item.coeficiente_beta);
+    
+    // Colores basados en si el coeficiente es positivo o negativo
+    const backgroundColors = valores.map(val => 
+        val >= 0 ? colors.success : colors.secondary
+    );
+    const borderColors = valores.map(val => 
+        val >= 0 ? '#059669' : '#DC2626'
+    );
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Coeficiente β',
+                data: valores,
+                backgroundColor: backgroundColors,
+                borderColor: borderColors,
+                borderWidth: 2,
+                borderRadius: 8,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y', // Barras horizontales
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const value = context.parsed.x;
+                            const impact = value > 0 ? 'Aumenta deserción' : 'Reduce deserción';
+                            return `β = ${value.toFixed(4)} (${impact})`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    grid: {
+                        color: '#E5E7EB'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Coeficiente β',
+                        font: {
+                            weight: 'bold'
+                        }
+                    }
+                },
+                y: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            size: 11
+                        }
+                    }
+                }
+            }
+        }
+    });
+    
+    // Llenar la tabla
+    fillCoeficientesTable(data);
+}
+
+// Función para llenar la tabla de coeficientes
+function fillCoeficientesTable(data) {
+    const tableBody = document.getElementById('coeficientesTable');
+    
+    const rows = data.coeficientes.map(item => {
+        const variableFormatted = item.variable.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        const coeficiente = item.coeficiente_beta.toFixed(4);
+        const impacto = item.coeficiente_beta >= 0 ? 'Aumenta deserción' : 'Reduce deserción';
+        const impactoColor = item.coeficiente_beta >= 0 ? 'text-red-600' : 'text-green-600';
+        
+        return `
+            <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    ${variableFormatted}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-mono">
+                    ${coeficiente}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm ${impactoColor} font-medium">
+                    ${impacto}
+                </td>
+            </tr>
+        `;
+    }).join('');
+    
+    tableBody.innerHTML = rows;
 }
 
 // Función para mostrar error si no se pueden cargar los datos

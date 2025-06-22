@@ -142,6 +142,31 @@
                 <div id="rocSection"></div>
                 <div id="confMatrixSection"></div>
                 <div id="sigmoidSection"></div>
+                <!-- Sección: Coeficientes Beta -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2">Coeficientes Beta del Modelo</h2>
+                    <p class="text-gray-600 mb-6">Impacto de cada variable en la probabilidad de deserción</p>
+                    
+                    <div class="relative h-96">
+                        <canvas id="coeficientesChart"></canvas>
+                    </div>
+                    
+                    <!-- Tabla de coeficientes -->
+                    <div class="mt-6 overflow-hidden rounded-lg border border-gray-200">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Variable</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Coeficiente β</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Impacto</th>
+                                </tr>
+                            </thead>
+                            <tbody id="coeficientesTable" class="bg-white divide-y divide-gray-200">
+                                <!-- Se llenará dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

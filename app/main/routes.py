@@ -104,3 +104,50 @@ def data():
         return jsonify(results)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@main.route('/api/coeficientes')
+def api_coeficientes():
+    """Endpoint para obtener los coeficientes del modelo"""
+    try:
+        if prediccion_service.modelo is None:
+            return jsonify({'error': 'Modelo no cargado'}), 500
+        
+        # Accede al paso de regresión logística
+        logreg = prediccion_service.modelo.named_steps["regresion_logistica"]
+        
+        # Coeficientes e intercepto
+        intercepto = logreg.intercept_[0]
+        coeficientes = logreg.coef_.ravel()
+        
+        # Nombres de las variables
+        columnas_caracteristicas = [
+            "edad",
+            "tasa_interes", 
+            "porcentaje_pago",
+            "dias_de_mora",
+            "plazo_credito_meses",
+            "num_microseguros",
+            "n_productos_vigentes",
+            "n_creditos_vigentes",
+            "calidad_servicio",
+            "estado_ahorro_activo"
+        ]
+        
+        # Crear lista de coeficientes
+        coeficientes_data = []
+        for i, variable in enumerate(columnas_caracteristicas):
+            coeficientes_data.append({
+                'variable': variable,
+                'coeficiente_beta': float(coeficientes[i])
+            })
+        
+        # Ordenar por valor absoluto del coeficiente (mayor impacto primero)
+        coeficientes_data.sort(key=lambda x: abs(x['coeficiente_beta']), reverse=True)
+        
+        return jsonify({
+            'intercepto': float(intercepto),
+            'coeficientes': coeficientes_data
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

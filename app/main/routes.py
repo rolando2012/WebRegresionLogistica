@@ -422,7 +422,7 @@ def exportar_pdf():
             ])
         
         # Si hay más de 20 registros, agregar nota
-        if len(resultados['datos_detallados']) > 20:
+        if len(resultados['datos_detallados']) >20:
             table_data.append(['...', '...', '...', '...', '...', '...'])
             table_data.append([f"Total: {len(resultados['datos_detallados'])} registros", '', '', '', '', ''])
         

@@ -456,20 +456,22 @@ def exportar_pdf():
         story.append(Spacer(1, 10))
         
         # Preparar datos para la tabla (TODOS los registros)
-        table_data = [['ID', 'Cal. Serv.', 'Tasa Int.', 'Edad', 'Probabilidad', 'Riesgo']]
+        table_data = [['ID', 'Cal. Serv.', 'Tasa Int.', 'Est. Ahorro', 'Prod. Vig.', 'Edad', 'Probabilidad', 'Riesgo']]
         
         for cliente in resultados['datos_detallados']:  # TODOS los registros
             table_data.append([
                 cliente['id'],
                 str(cliente['calidad_servicio']),
                 f"{cliente['tasa_interes']:.1f}%",
+                'Activo' if cliente['estado_ahorro_activo'] == 1 else 'Inactivo',  # NUEVA LÍNEA
+                str(cliente['n_productos_vigentes']),  # NUEVA LÍNEA
                 str(cliente['edad']),
                 f"{cliente['probabilidad']*100:.1f}%",
                 cliente['riesgo']
             ])
         
         # Crear tabla con todos los datos
-        detail_table = Table(table_data, colWidths=[0.7*inch, 0.8*inch, 0.8*inch, 0.6*inch, 1*inch, 0.7*inch])
+        detail_table = Table(table_data, colWidths=[0.6*inch, 0.7*inch, 0.7*inch, 0.8*inch, 0.7*inch, 0.6*inch, 0.9*inch, 0.6*inch])
         
         # Estilo base de la tabla
         table_style = [
@@ -489,9 +491,9 @@ def exportar_pdf():
         # Colorear filas según el riesgo
         for i, cliente in enumerate(resultados['datos_detallados'], 1):
             if cliente['riesgo'] == 'ALTO':
-                table_style.append(('BACKGROUND', (5, i), (5, i), colors.lightcoral))
+                table_style.append(('BACKGROUND', (7, i), (7, i), colors.lightcoral))  # Cambiar de 5 a 7
             else:
-                table_style.append(('BACKGROUND', (5, i), (5, i), colors.lightgreen))
+                table_style.append(('BACKGROUND', (7, i), (7, i), colors.lightgreen))  # Cambiar de 5 a 7
         
         detail_table.setStyle(TableStyle(table_style))
         story.append(detail_table)

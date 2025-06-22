@@ -92,6 +92,8 @@ class PrediccionMasivaService:
                     "id":              f"{i+1:03d}",
                     'calidad_servicio': int(df.iloc[i]['calidad_servicio']),
                     'tasa_interes': float(df.iloc[i]['tasa_interes']),
+                    'estado_ahorro_activo': int(df.iloc[i]['estado_ahorro_activo']),  # NUEVA LÍNEA
+                    'n_productos_vigentes': int(df.iloc[i]['n_productos_vigentes']),  # NUEVA LÍNEA
                     "edad":            int(df.iloc[i]["edad"]),
                     "probabilidad":    float(probs[i]),
                     "prediccion":      int(preds[i]),

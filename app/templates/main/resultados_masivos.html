@@ -121,12 +121,13 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
                         </div>
-                        <a href="{{ url_for('main.exportar_pdf') }}" id="exportBtn" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center space-x-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                        </svg>
-                        <span>Exportar PDF</span>
-                    </a>
+                        <!-- REEMPLAZAR el botón existente CON: -->
+                <button id="exportPdfBtn" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                    <span>Exportar PDF</span>
+                </button>
                     </div>
                 </div>
 
@@ -439,6 +440,60 @@ document.addEventListener('DOMContentLoaded', function() {
     // Actualizar contador inicial
     const totalVisible = document.querySelectorAll('#tableBody tr').length;
     document.getElementById('showingInfo').textContent = totalVisible;
+});
+
+// Funcionalidad de exportar PDF con SweetAlert2
+document.getElementById('exportPdfBtn').addEventListener('click', function() {
+    // Mostrar loading
+    Swal.fire({
+        title: 'Generando PDF...',
+        html: 'Por favor espere mientras se genera el reporte completo',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+    
+    // Crear enlace temporal para descargar
+    const link = document.createElement('a');
+    link.href = "{{ url_for('main.exportar_pdf') }}";
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    
+    // Simular click y limpiar
+    link.click();
+    document.body.removeChild(link);
+    
+    // Cerrar loading después de un momento y mostrar mensaje de éxito
+    setTimeout(() => {
+        Swal.fire({
+            icon: 'success',
+            title: '¡PDF Generado!',
+            text: 'El reporte se ha descargado exitosamente',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#10B981'
+        });
+    }, 2000);
+    
+    // Manejar errores (en caso de que la descarga falle)
+    setTimeout(() => {
+        // Verificar si el PDF se descargó (esto es una aproximación)
+        const downloads = navigator.userAgent.toLowerCase().indexOf('chrome') > -1 ? 
+                         'chrome://downloads/' : 'about:downloads';
+        
+        // Solo mostrar error si hay indicios de fallo
+        link.onerror = function() {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al generar PDF',
+                text: 'Hubo un problema al generar el reporte. Por favor, intente nuevamente.',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#EF4444'
+            });
+        };
+    }, 5000);
 });
 </script>
 {% endblock %}

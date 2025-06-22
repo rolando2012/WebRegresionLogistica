@@ -281,34 +281,40 @@ def resultados_masivos():
 
 @main.route('/exportar-pdf')
 def exportar_pdf():
-    """Exportar resultados a PDF"""
+    """Exportar resultados a PDF con gráficos"""
     try:
         from flask import session
         from reportlab.lib.pagesizes import letter, A4
-        from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
+        from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image, PageBreak
         from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
         from reportlab.lib.units import inch
         from reportlab.lib import colors
         from reportlab.graphics.shapes import Drawing
         from reportlab.graphics.charts.piecharts import Pie
         from reportlab.graphics.charts.linecharts import HorizontalLineChart
+        from reportlab.graphics.charts.lineplots import LinePlot
+        from reportlab.graphics.widgets.markers import makeMarker
         from reportlab.lib.colors import HexColor
         import io
         import base64
         from datetime import datetime
+        import matplotlib.pyplot as plt
+        import matplotlib
+        matplotlib.use('Agg')  # Para evitar problemas con GUI
+        import numpy as np
         
         # Obtener resultados de la sesión
         resultados = session.get('resultados_prediccion')
         if not resultados:
-            return redirect(url_for('main.analisis_masivo'))
+            return jsonify({'success': False, 'error': 'No hay datos para exportar'}), 400
         
         # Crear buffer para el PDF
         buffer = io.BytesIO()
         
         # Crear documento PDF
         doc = SimpleDocTemplate(buffer, pagesize=A4,
-                              rightMargin=72, leftMargin=72,
-                              topMargin=72, bottomMargin=18)
+                              rightMargin=50, leftMargin=50,
+                              topMargin=50, bottomMargin=50)
         
         # Contenido del PDF
         story = []
@@ -374,44 +380,85 @@ def exportar_pdf():
         ]))
         
         story.append(stats_table)
-        story.append(Spacer(1, 20))
+        story.append(Spacer(1, 30))
         
-        # Gráfico de distribución (simulado con tabla)
+        # === GRÁFICO DE TORTA ===
         story.append(Paragraph("DISTRIBUCIÓN POR RIESGO", subtitle_style))
         
-        pie_data = [
-            ['Estado del Cliente', 'Cantidad', 'Representación Visual'],
-            ['Clientes Fieles', str(resultados['datos_torta']['fieles']['cantidad']), 
-             '█' * int(resultados['datos_torta']['fieles']['porcentaje'] / 5) + f" ({resultados['datos_torta']['fieles']['porcentaje']}%)"],
-            ['Posibles Desertores', str(resultados['datos_torta']['desertores']['cantidad']), 
-             '█' * int(resultados['datos_torta']['desertores']['porcentaje'] / 5) + f" ({resultados['datos_torta']['desertores']['porcentaje']}%)"]
-        ]
+        # Crear gráfico de torta con matplotlib
+        fig, ax = plt.subplots(figsize=(6, 6))
+        labels = ['Clientes Fieles', 'Posibles Desertores']
+        sizes = [resultados['datos_torta']['fieles']['cantidad'], 
+                resultados['datos_torta']['desertores']['cantidad']]
+        colors_pie = ['#10B981', '#EF4444']
         
-        pie_table = Table(pie_data, colWidths=[2*inch, 1*inch, 3*inch])
-        pie_table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 11),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (0, 1), colors.lightgreen),
-            ('BACKGROUND', (0, 2), (0, 2), colors.lightcoral),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black),
-            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-            ('FONTSIZE', (0, 1), (-1, -1), 9),
-        ]))
+        wedges, texts, autotexts = ax.pie(sizes, labels=labels, colors=colors_pie, autopct='%1.1f%%',
+                                         startangle=90, textprops={'fontsize': 10})
+        ax.set_title('Distribución de Clientes por Riesgo de Deserción', fontsize=12, fontweight='bold')
         
-        story.append(pie_table)
+        # Guardar gráfico como imagen
+        pie_buffer = io.BytesIO()
+        plt.savefig(pie_buffer, format='png', dpi=300, bbox_inches='tight')
+        pie_buffer.seek(0)
+        
+        # Agregar imagen al PDF
+        pie_image = Image(pie_buffer, width=4*inch, height=4*inch)
+        story.append(pie_image)
+        plt.close()
         story.append(Spacer(1, 20))
         
-        # Tabla de resultados detallados
-        story.append(Paragraph("RESULTADOS DETALLADOS", subtitle_style))
+        # === GRÁFICO SIGMOIDE ===
+        story.append(Paragraph("EDAD VS PROBABILIDAD DE DESERCIÓN", subtitle_style))
         
-        # Preparar datos para la tabla (primeros 20 registros)
-        table_data = [['ID', 'Calidad Servicio', 'Tasa Interés', 'Edad', 'Probabilidad', 'Riesgo']]
+        # Crear gráfico sigmoide
+        fig, ax = plt.subplots(figsize=(8, 6))
         
-        for i, cliente in enumerate(resultados['datos_detallados'][:20]):  # Mostrar solo primeros 20
+        # Extraer datos
+        z_scores = [item['z_score'] for item in resultados['datos_sigmoide']]
+        sigmoides = [item['sigmoide'] for item in resultados['datos_sigmoide']]
+        predicciones = [item['prediccion'] for item in resultados['datos_sigmoide']]
+        
+        # Separar por predicción
+        z_fieles = [z for z, p in zip(z_scores, predicciones) if p == 0]
+        s_fieles = [s for s, p in zip(sigmoides, predicciones) if p == 0]
+        z_desertores = [z for z, p in zip(z_scores, predicciones) if p == 1]
+        s_desertores = [s for s, p in zip(sigmoides, predicciones) if p == 1]
+        
+        # Plotear puntos
+        ax.scatter(z_fieles, s_fieles, c='#10B981', alpha=0.6, label='Clientes Fieles', s=30)
+        ax.scatter(z_desertores, s_desertores, c='#EF4444', alpha=0.6, label='Posibles Desertores', s=30)
+        
+        # Crear línea sigmoide suave
+        z_range = np.linspace(min(z_scores), max(z_scores), 100)
+        sigmoid_line = 1 / (1 + np.exp(-z_range))
+        ax.plot(z_range, sigmoid_line, 'k--', alpha=0.5, linewidth=2, label='Función Sigmoide')
+        
+        ax.set_xlabel('Z-Score', fontsize=10)
+        ax.set_ylabel('Probabilidad (Sigmoide)', fontsize=10)
+        ax.set_title('Relación entre Z-Score y Probabilidad de Deserción', fontsize=12, fontweight='bold')
+        ax.legend()
+        ax.grid(True, alpha=0.3)
+        
+        # Guardar gráfico
+        sigmoid_buffer = io.BytesIO()
+        plt.savefig(sigmoid_buffer, format='png', dpi=300, bbox_inches='tight')
+        sigmoid_buffer.seek(0)
+        
+        # Agregar imagen al PDF
+        sigmoid_image = Image(sigmoid_buffer, width=6*inch, height=4.5*inch)
+        story.append(sigmoid_image)
+        plt.close()
+        story.append(PageBreak())
+        
+        # === TABLA COMPLETA DE RESULTADOS ===
+        story.append(Paragraph("RESULTADOS DETALLADOS COMPLETOS", subtitle_style))
+        story.append(Paragraph(f"Tabla completa con {len(resultados['datos_detallados'])} registros", styles['Normal']))
+        story.append(Spacer(1, 10))
+        
+        # Preparar datos para la tabla (TODOS los registros)
+        table_data = [['ID', 'Cal. Serv.', 'Tasa Int.', 'Edad', 'Probabilidad', 'Riesgo']]
+        
+        for cliente in resultados['datos_detallados']:  # TODOS los registros
             table_data.append([
                 cliente['id'],
                 str(cliente['calidad_servicio']),
@@ -421,37 +468,32 @@ def exportar_pdf():
                 cliente['riesgo']
             ])
         
-        # Si hay más de 20 registros, agregar nota
-        if len(resultados['datos_detallados']) >20:
-            table_data.append(['...', '...', '...', '...', '...', '...'])
-            table_data.append([f"Total: {len(resultados['datos_detallados'])} registros", '', '', '', '', ''])
+        # Crear tabla con todos los datos
+        detail_table = Table(table_data, colWidths=[0.7*inch, 0.8*inch, 0.8*inch, 0.6*inch, 1*inch, 0.7*inch])
         
-        detail_table = Table(table_data, colWidths=[0.8*inch, 1.2*inch, 1*inch, 0.8*inch, 1*inch, 0.8*inch])
-        detail_table.setStyle(TableStyle([
+        # Estilo base de la tabla
+        table_style = [
             ('BACKGROUND', (0, 0), (-1, 0), colors.navy),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 9),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('FONTSIZE', (0, 0), (-1, 0), 8),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
             ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
             ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-            ('FONTSIZE', (0, 1), (-1, -1), 8),
+            ('FONTSIZE', (0, 1), (-1, -1), 7),
             ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
-        ]))
+        ]
         
         # Colorear filas según el riesgo
-        for i, cliente in enumerate(resultados['datos_detallados'][:20], 1):
+        for i, cliente in enumerate(resultados['datos_detallados'], 1):
             if cliente['riesgo'] == 'ALTO':
-                detail_table.setStyle(TableStyle([
-                    ('BACKGROUND', (5, i), (5, i), colors.lightcoral),
-                ]))
+                table_style.append(('BACKGROUND', (5, i), (5, i), colors.lightcoral))
             else:
-                detail_table.setStyle(TableStyle([
-                    ('BACKGROUND', (5, i), (5, i), colors.lightgreen),
-                ]))
+                table_style.append(('BACKGROUND', (5, i), (5, i), colors.lightgreen))
         
+        detail_table.setStyle(TableStyle(table_style))
         story.append(detail_table)
         story.append(Spacer(1, 20))
         
@@ -483,17 +525,15 @@ def exportar_pdf():
         
         # Preparar respuesta
         buffer.seek(0)
+        pdf_data = buffer.read()
+        buffer.close()
         
         from flask import make_response
-        response = make_response(buffer.read())
+        response = make_response(pdf_data)
         response.headers['Content-Type'] = 'application/pdf'
         response.headers['Content-Disposition'] = f'attachment; filename=reporte_prediccion_{datetime.now().strftime("%Y%m%d_%H%M%S")}.pdf'
-        
-        buffer.close()
         
         return response
         
     except Exception as e:
-        from flask import flash
-        flash(f'Error al generar PDF: {str(e)}', 'error')
-        return redirect(url_for('main.resultados_masivos'))
+        return jsonify({'success': False, 'error': f'Error al generar PDF: {str(e)}'}), 500

@@ -458,6 +458,9 @@ def exportar_pdf():
         # Preparar datos para la tabla (TODOS los registros)
         table_data = [['ID', 'Cal. Serv.', 'Tasa Int.', 'Est. Ahorro', 'Prod. Vig.', 'Edad', 'Probabilidad', 'Riesgo']]
         
+        # Ordenar los datos por Riesgo (ALTO primero)
+        resultados['datos_detallados'].sort(key=lambda x: x['riesgo'] == 'ALTO', reverse=True)
+
         for cliente in resultados['datos_detallados']:  # TODOS los registros
             table_data.append([
                 cliente['id'],

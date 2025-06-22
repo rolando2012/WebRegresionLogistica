@@ -76,45 +76,44 @@
                     <p class="text-gray-600 mb-6">Sube un archivo CSV con los datos de los clientes para analizar</p>
                     
             <form id="csvForm" method="POST" enctype="multipart/form-data" class="space-y-6">
-    <!-- Área de carga de archivo -->
-    <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
-        <div class="bg-blue-50 w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-            </svg>
-        </div>
-        <label for="csv_file" class="cursor-pointer">
-            <span id="file-label" class="text-lg font-medium text-gray-900">Selecciona un archivo CSV</span>
-            <p class="text-gray-500 mt-2">O arrastra y suelta el archivo aquí</p>
-            <input type="file" id="csv_file" name="csv_file" accept=".csv" class="hidden" required>
-        </label>
-    </div>
+            <!-- Área de carga de archivo -->
+            <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
+                <div class="bg-blue-50 w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+                </div>
+                <label for="csv_file" class="cursor-pointer">
+                    <span id="file-label" class="text-lg font-medium text-gray-900">Selecciona un archivo CSV</span>
+                    <p class="text-gray-500 mt-2">O arrastra y suelta el archivo aquí</p>
+                    <input type="file" id="csv_file" name="csv_file" accept=".csv" class="hidden" required>
+                </label>
+            </div>
 
+        </form>
 
-</form>
-
-<!-- Sección de Vista Previa (inicialmente oculta) -->
-<div id="preview-section" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hidden">
-    <h2 class="text-xl font-semibold text-gray-900 mb-2">Vista Previa de Datos</h2>
-    <p id="preview-subtitle" class="text-gray-600 mb-6">Primeras 2 filas del archivo cargado</p>
-    
-    <div class="overflow-x-auto">
-        <table id="preview-table" class="min-w-full text-sm">
-            <!-- El contenido se llenará dinámicamente -->
-        </table>
-    </div>
-    
-    <div class="flex justify-between items-center mt-4">
-        <p id="total-records" class="text-gray-600">Total de registros: 0</p>
-        <button id="predict-btn" class="bg-black text-white px-8 py-3 rounded-lg hover:bg-gray-800 transition-colors flex items-center space-x-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <span>Predecir Lote</span>
-        </button>
-    </div>
-</div>
-</div>
+                <!-- Sección de Vista Previa (inicialmente oculta) -->
+                <div id="preview-section" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hidden">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2">Vista Previa de Datos</h2>
+                    <p id="preview-subtitle" class="text-gray-600 mb-6">Primeras 10 filas del archivo cargado</p>
+                    
+                    <div class="overflow-x-auto">
+                        <table id="preview-table" class="min-w-full text-sm">
+                            <!-- El contenido se llenará dinámicamente -->
+                        </table>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mt-4">
+                        <p id="total-records" class="text-gray-600">Total de registros: 0</p>
+                        <button id="predict-btn" class="bg-black text-white px-8 py-3 rounded-lg hover:bg-gray-800 transition-colors flex items-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>Predecir Lote</span>
+                        </button>
+                    </div>
+                </div>
+                </div>
                 </div>
 
                 <!-- Sección: Formato del Archivo -->
@@ -193,9 +192,9 @@
                        <!-- Reemplazar SOLO el contenido del div con clase "bg-gray-900 text-green-400" -->
                         <div class="bg-gray-900 text-green-400 rounded-lg p-4 font-mono text-sm overflow-x-auto">
                             <div>Edad,Calidad_servicio,Estado_ahorro_activo,Productos_vigentes,Numero_microseguros,Tasa_interes,Plazo_credito,Dias_mora,Porcentaje_pago,Numero_creditos</div>
-                            <div>35,4.2,1,3,2,12.5,24,0,95.5,5</div>
-                            <div>28,3.8,0,2,1,15.0,12,5,88.2,3</div>
-                            <div>42,4.7,1,4,3,10.2,36,0,98.1,8</div>
+                            <div>35,62,1,3,2,12.5,24,0,95.5,5</div>
+                            <div>28,38,0,2,1,15.0,12,5,88.2,3</div>
+                            <div>42,40,1,4,3,10.2,36,0,98.1,8</div>
                         </div>
                     </div>
                 </div>
@@ -352,8 +351,8 @@ function validateAndPreviewFile(file) {
                 return;
             }
 
-            // Validar columnas (cambio a punto y coma)
-            const headers = lines[0].split(';').map(h => h.trim());
+            // Validar columnas 
+            const headers = lines[0].split(',').map(h => h.trim());
             const validation = validateColumns(headers);
             
             if (!validation.isValid) {
@@ -372,10 +371,10 @@ function validateAndPreviewFile(file) {
                 });
             }
 
-            // Procesar datos para vista previa (mostrar solo primeras 2 filas, pero guardar todos)
+            // Procesar datos para vista previa (mostrar solo primeras 10 filas, pero guardar todos)
             totalRecords = lines.length - 1; // Total real de registros
             csvData = parseAllCSVData(lines, headers); // Todos los datos
-            const previewData = parseCSVData(lines, headers, 2); // Solo 2 para preview
+            const previewData = parseCSVData(lines, headers, 10); // Solo 10 para preview
             showPreview(previewData, headers);
             
             // Actualizar UI
@@ -451,7 +450,7 @@ function showColumnValidationError(validation) {
 function parseAllCSVData(lines, headers) {
     const data = [];
     for (let i = 1; i < lines.length; i++) {
-        const values = lines[i].split(';').map(v => v.trim());
+        const values = lines[i].split(',').map(v => v.trim());
         const row = {};
         headers.forEach((header, index) => {
             if (expectedColumns.includes(header)) {
@@ -464,11 +463,11 @@ function parseAllCSVData(lines, headers) {
 }
 
 // Función para parsear datos CSV (solo para preview)
-function parseCSVData(lines, headers, limit = 2) {
+function parseCSVData(lines, headers, limit = 10) {
     const data = [];
     const maxLines = Math.min(lines.length, limit + 1);
     for (let i = 1; i < maxLines; i++) {
-        const values = lines[i].split(';').map(v => v.trim());
+        const values = lines[i].split(',').map(v => v.trim());
         const row = {};
         headers.forEach((header, index) => {
             if (expectedColumns.includes(header)) {

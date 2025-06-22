@@ -107,39 +107,65 @@
                     <h2 class="text-xl font-semibold text-gray-900 mb-4">Formato del Archivo CSV</h2>
                     <p class="text-gray-600 mb-6">El archivo CSV debe contener las siguientes columnas:</p>
                     
-                    <div class="bg-gray-50 rounded-lg p-4 overflow-x-auto">
-                        <table class="min-w-full text-sm">
-                            <thead>
-                                <tr class="border-b border-gray-200">
-                                    <th class="text-left py-2 px-4 font-medium text-gray-900">Columna</th>
-                                    <th class="text-left py-2 px-4 font-medium text-gray-900">Descripción</th>
-                                    <th class="text-left py-2 px-4 font-medium text-gray-900">Tipo</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
+                    <!-- Reemplazar SOLO la tabla dentro de la sección "Formato del Archivo CSV" -->
+<div class="bg-gray-50 rounded-lg p-4 overflow-x-auto">
+    <table class="min-w-full text-sm">
+        <thead>
+            <tr class="border-b border-gray-200">
+                <th class="text-left py-2 px-4 font-medium text-gray-900">Columna</th>
+                <th class="text-left py-2 px-4 font-medium text-gray-900">Descripción</th>
+                <th class="text-left py-2 px-4 font-medium text-gray-900">Tipo</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+            <tr>
+                <td class="py-2 px-4 font-mono text-gray-700">Edad</td>
+                <td class="py-2 px-4 text-gray-600">Edad del cliente en años</td>
+                <td class="py-2 px-4 text-gray-600">Numérico</td>
+            </tr>
+            <tr>
+                <td class="py-2 px-4 font-mono text-gray-700">Calidad_servicio</td>
+                <td class="py-2 px-4 text-gray-600">Calificación de la calidad del servicio</td>
+                <td class="py-2 px-4 text-gray-600">Numérico</td>
+            </tr>
+            <tr>
+                <td class="py-2 px-4 font-mono text-gray-700">Estado_ahorro_activo</td>
+                <td class="py-2 px-4 text-gray-600">Estado de cuenta de ahorro (0: Inactivo, 1: Activo)</td>
+                <td class="py-2 px-4 text-gray-600">Dummy</td>
+            </tr>
+            <tr>
+                <td class="py-2 px-4 font-mono text-gray-700">Productos_vigentes</td>
+                <td class="py-2 px-4 text-gray-600">Número de productos bancarios vigentes</td>
+                <td class="py-2 px-4 text-gray-600">Numérico</td>
+            </tr>
+            <tr>
+                <td class="py-2 px-4 font-mono text-gray-700">Numero_microseguros</td>
+                <td class="py-2 px-4 text-gray-600">Cantidad de microseguros contratados</td>
+                <td class="py-2 px-4 text-gray-600">Numérico</td>
+            </tr>
+            <tr>
+                <td class="py-2 px-4 font-mono text-gray-700">Tasa_interes</td>
+                <td class="py-2 px-4 text-gray-600">Tasa de interés aplicada al crédito</td>
+                <td class="py-2 px-4 text-gray-600">Numérico</td>
+            </tr>
+            <tr>
+                <td class="py-2 px-4 font-mono text-gray-700">Plazo_credito</td>
+                <td class="py-2 px-4 text-gray-600">Plazo del crédito en meses</td>
+                <td class="py-2 px-4 text-gray-600">Numérico</td>
+            </tr>
+            <tr>
+                <td class="py-2 px-4 font-mono text-gray-700">Dias_mora</td>
+                <td class="py-2 px-4 text-gray-600">Días de mora acumulados</td>
+                <td class="py-2 px-4 text-gray-600">Numérico</td>
+                            </tr>
                                 <tr>
-                                    <td class="py-2 px-4 font-mono text-gray-700">edad</td>
-                                    <td class="py-2 px-4 text-gray-600">Edad del cliente</td>
+                                    <td class="py-2 px-4 font-mono text-gray-700">Porcentaje_pago</td>
+                                    <td class="py-2 px-4 text-gray-600">Porcentaje de pagos realizados a tiempo</td>
                                     <td class="py-2 px-4 text-gray-600">Numérico</td>
                                 </tr>
                                 <tr>
-                                    <td class="py-2 px-4 font-mono text-gray-700">ingreso_mensual</td>
-                                    <td class="py-2 px-4 text-gray-600">Ingreso mensual del cliente</td>
-                                    <td class="py-2 px-4 text-gray-600">Numérico</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-2 px-4 font-mono text-gray-700">monto_prestamo</td>
-                                    <td class="py-2 px-4 text-gray-600">Monto del préstamo</td>
-                                    <td class="py-2 px-4 text-gray-600">Numérico</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-2 px-4 font-mono text-gray-700">historial_crediticio</td>
-                                    <td class="py-2 px-4 text-gray-600">Historial crediticio (0-1)</td>
-                                    <td class="py-2 px-4 text-gray-600">Numérico</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-2 px-4 font-mono text-gray-700">tiempo_relacion</td>
-                                    <td class="py-2 px-4 text-gray-600">Tiempo de relación en meses</td>
+                                    <td class="py-2 px-4 font-mono text-gray-700">Numero_creditos</td>
+                                    <td class="py-2 px-4 text-gray-600">Número total de créditos otorgados</td>
                                     <td class="py-2 px-4 text-gray-600">Numérico</td>
                                 </tr>
                             </tbody>
@@ -149,11 +175,12 @@
                     <!-- Ejemplo de archivo -->
                     <div class="mt-6">
                         <h3 class="font-medium text-gray-900 mb-3">Ejemplo de archivo CSV:</h3>
+                       <!-- Reemplazar SOLO el contenido del div con clase "bg-gray-900 text-green-400" -->
                         <div class="bg-gray-900 text-green-400 rounded-lg p-4 font-mono text-sm overflow-x-auto">
-                            <div>edad,ingreso_mensual,monto_prestamo,historial_crediticio,tiempo_relacion</div>
-                            <div>35,5000,15000,0.8,24</div>
-                            <div>28,3500,8000,0.6,12</div>
-                            <div>42,7000,25000,0.9,36</div>
+                            <div>Edad,Calidad_servicio,Estado_ahorro_activo,Productos_vigentes,Numero_microseguros,Tasa_interes,Plazo_credito,Dias_mora,Porcentaje_pago,Numero_creditos</div>
+                            <div>35,4.2,1,3,2,12.5,24,0,95.5,5</div>
+                            <div>28,3.8,0,2,1,15.0,12,5,88.2,3</div>
+                            <div>42,4.7,1,4,3,10.2,36,0,98.1,8</div>
                         </div>
                     </div>
                 </div>

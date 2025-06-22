@@ -96,6 +96,40 @@
                     </div>
                 </div>
 
+                <!-- Sección: Variables Continuas por Deserción -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2">Variables Continuas por Deserción</h2>
+                    <p class="text-gray-600 mb-6">Distribución de variables numéricas entre clientes fieles y desertores</p>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4 overflow-hidden">
+                        <img src="/plot/boxplots.png" 
+                             alt="Boxplots de variables continuas" 
+                             class="w-full h-auto rounded-lg shadow-sm border border-gray-200"
+                             style="max-height: 800px; object-fit: contain;">
+                    </div>
+                    
+                    <div class="mt-4 text-sm text-gray-600">
+                        <p><strong>Interpretación:</strong> Los boxplots muestran la distribución de cada variable numérica separada por estado de deserción. Las diferencias significativas entre grupos pueden indicar variables predictivas importantes.</p>
+                    </div>
+                </div>
+
+                <!-- Sección: Matriz de Correlaciones -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2">Matriz de Correlaciones</h2>
+                    <p class="text-gray-600 mb-6">Relaciones lineales entre las variables del modelo</p>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4 flex justify-center">
+                        <img src="/plot/corr.png" 
+                             alt="Heatmap de correlaciones" 
+                             class="rounded-lg shadow-sm border border-gray-200"
+                             style="max-height: 600px; object-fit: contain;">
+                    </div>
+                    
+                    <div class="mt-4 text-sm text-gray-600">
+                        <p><strong>Interpretación:</strong> El mapa de calor muestra las correlaciones entre variables. Los valores cercanos a +1 (rojo) indican correlación positiva fuerte, mientras que valores cercanos a -1 (azul) indican correlación negativa fuerte.</p>
+                    </div>
+                </div>
+
                 <!-- Sección: Métricas del Modelo -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <h2 class="text-xl font-semibold text-gray-900 mb-2">Métricas de Rendimiento</h2>

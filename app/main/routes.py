@@ -3,6 +3,13 @@ import json
 import os
 from flask import current_app
 from app.services.prediccion_service import PrediccionService
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
+import io
+from flask import send_file
 
 main = Blueprint('main', __name__)
 
@@ -148,6 +155,73 @@ def api_coeficientes():
             'intercepto': float(intercepto),
             'coeficientes': coeficientes_data
         })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@main.route('/plot/boxplots.png')
+def boxplots_png():
+    """Endpoint para generar boxplots de variables continuas"""
+    try:
+        json_path = os.path.join(current_app.root_path, 'data', 'results_microfinanzas.json')
+        with open(json_path, 'r', encoding='utf-8') as f:
+            res = json.load(f)
+        
+        cont = res['cont_grouped']
+        num_vars = list(cont.keys())
+        
+        # Reconstruimos un DataFrame para seaborn
+        rows = []
+        for var in num_vars:
+            for cls, vals in cont[var].items():
+                for v in vals:
+                    rows.append({'variable': var, 'desercion': cls, 'valor': v})
+        df = pd.DataFrame(rows)
+        
+        fig, axes = plt.subplots(5, 2, figsize=(15, 12))
+        axes = axes.flatten()
+        
+        for ax, var in zip(axes, num_vars):
+            sns.boxplot(x='desercion', y='valor',
+                       data=df[df['variable']==var],
+                       dodge=False, ax=ax)
+            ax.set_title(f"{var} por deserción")
+            ax.set_xlabel("Deserción")
+            ax.set_ylabel(var)
+        
+        plt.tight_layout()
+        
+        buf = io.BytesIO()
+        fig.savefig(buf, format='png', dpi=100)
+        plt.close(fig)
+        buf.seek(0)
+        
+        return send_file(buf, mimetype='image/png')
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@main.route('/plot/corr.png')
+def corr_png():
+    """Endpoint para generar heatmap de correlaciones"""
+    try:
+        json_path = os.path.join(current_app.root_path, 'data', 'results_microfinanzas.json')
+        with open(json_path, 'r', encoding='utf-8') as f:
+            res = json.load(f)
+        
+        corr = pd.DataFrame(res['corr_matrix'])
+        
+        fig, ax = plt.subplots(figsize=(10, 8))
+        sns.heatmap(corr, annot=True, cmap="coolwarm", center=0, ax=ax)
+        ax.set_title("Mapa de calor de correlaciones")
+        plt.tight_layout()
+        
+        buf = io.BytesIO()
+        fig.savefig(buf, format='png', dpi=100)
+        plt.close(fig)
+        buf.seek(0)
+        
+        return send_file(buf, mimetype='image/png')
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500

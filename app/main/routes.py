@@ -408,7 +408,7 @@ def exportar_pdf():
         story.append(Spacer(1, 20))
         
         # === GRÁFICO SIGMOIDE ===
-        story.append(Paragraph("EDAD VS PROBABILIDAD DE DESERCIÓN", subtitle_style))
+        story.append(Paragraph("RELACIÓN ENTRE Z-SCORE   VS PROBABILIDAD DE DESERCIÓN", subtitle_style))
         
         # Crear gráfico sigmoide
         fig, ax = plt.subplots(figsize=(8, 6))

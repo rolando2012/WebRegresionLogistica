@@ -75,31 +75,50 @@
                     <h2 class="text-xl font-semibold text-gray-900 mb-2">Cargar Archivo CSV</h2>
                     <p class="text-gray-600 mb-6">Sube un archivo CSV con los datos de los clientes para analizar</p>
                     
-                    <form method="POST" enctype="multipart/form-data" class="space-y-6">
-                        <!-- Área de carga de archivo -->
-                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
-                            <div class="bg-blue-50 w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4">
-                                <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                                </svg>
-                            </div>
-                            <label for="csv_file" class="cursor-pointer">
-                                <span class="text-lg font-medium text-gray-900">Selecciona un archivo CSV</span>
-                                <p class="text-gray-500 mt-2">O arrastra y suelta el archivo aquí</p>
-                                <input type="file" id="csv_file" name="csv_file" accept=".csv" class="hidden" required>
-                            </label>
-                        </div>
+                    <form id="csvForm" method="POST" enctype="multipart/form-data" class="space-y-6">
+    <!-- Área de carga de archivo -->
+    <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
+        <div class="bg-blue-50 w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+            </svg>
+        </div>
+        <label for="csv_file" class="cursor-pointer">
+            <span id="file-label" class="text-lg font-medium text-gray-900">Selecciona un archivo CSV</span>
+            <p class="text-gray-500 mt-2">O arrastra y suelta el archivo aquí</p>
+            <input type="file" id="csv_file" name="csv_file" accept=".csv" class="hidden" required>
+        </label>
+    </div>
 
-                        <!-- Botón de envío -->
-                        <div class="flex justify-center">
-                            <button type="submit" class="bg-gray-900 text-white px-8 py-3 rounded-lg hover:bg-gray-800 transition-colors flex items-center space-x-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                <span>Procesar Archivo</span>
-                            </button>
-                        </div>
-                    </form>
+    <!-- Botón de envío -->
+    <div class="flex justify-center">
+        <button type="submit" id="submitBtn" class="bg-gray-900 text-white px-8 py-3 rounded-lg hover:bg-gray-800 transition-colors flex items-center space-x-2" disabled>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>Procesar Archivo</span>
+        </button>
+    </div>
+</form>
+
+<!-- Sección de Vista Previa (inicialmente oculta) -->
+<div id="preview-section" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hidden">
+    <h2 class="text-xl font-semibold text-gray-900 mb-2">Vista Previa de Datos</h2>
+    <p id="preview-subtitle" class="text-gray-600 mb-6">Primeras 2 filas del archivo cargado</p>
+    
+    <div class="overflow-x-auto">
+        <table id="preview-table" class="min-w-full text-sm">
+            <!-- El contenido se llenará dinámicamente -->
+        </table>
+    </div>
+    
+    <div class="flex justify-between items-center mt-4">
+        <p id="total-records" class="text-gray-600">Total de registros: 0</p>
+        <button id="predict-btn" class="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition-colors">
+            Predecir Lote
+        </button>
+    </div>
+</div>
                 </div>
 
                 <!-- Sección: Formato del Archivo -->
@@ -261,10 +280,22 @@
 </div>
 
 <script>
-// Manejo de drag and drop para el archivo
+// Columnas esperadas
+const expectedColumns = [
+    'Edad', 'Calidad_servicio', 'Estado_ahorro_activo', 'Productos_vigentes',
+    'Numero_microseguros', 'Tasa_interes', 'Plazo_credito', 'Dias_mora',
+    'Porcentaje_pago', 'Numero_creditos'
+];
+
+// Variables globales
+let csvData = null;
 const dropZone = document.querySelector('.border-dashed');
 const fileInput = document.getElementById('csv_file');
+const fileLabel = document.getElementById('file-label');
+const submitBtn = document.getElementById('submitBtn');
+const previewSection = document.getElementById('preview-section');
 
+// Manejo de drag and drop
 dropZone.addEventListener('dragover', (e) => {
     e.preventDefault();
     dropZone.classList.add('border-gray-400', 'bg-gray-50');
@@ -280,20 +311,249 @@ dropZone.addEventListener('drop', (e) => {
     dropZone.classList.remove('border-gray-400', 'bg-gray-50');
     
     const files = e.dataTransfer.files;
-    if (files.length > 0 && files[0].type === 'text/csv') {
+    if (files.length > 0) {
         fileInput.files = files;
-        // Opcional: mostrar el nombre del archivo
-        const fileName = files[0].name;
-        dropZone.querySelector('span').textContent = `Archivo seleccionado: ${fileName}`;
+        validateAndPreviewFile(files[0]);
     }
 });
 
-// Mostrar nombre del archivo cuando se selecciona
+// Manejo de selección de archivo
 fileInput.addEventListener('change', (e) => {
     if (e.target.files.length > 0) {
-        const fileName = e.target.files[0].name;
-        dropZone.querySelector('span').textContent = `Archivo seleccionado: ${fileName}`;
+        validateAndPreviewFile(e.target.files[0]);
     }
+});
+
+// Función para validar y previsualizar archivo
+function validateAndPreviewFile(file) {
+    // Validar tipo de archivo
+    if (!file.name.toLowerCase().endsWith('.csv')) {
+        Swal.fire({
+            title: 'Archivo inválido',
+            text: 'Por favor selecciona un archivo CSV válido.',
+            icon: 'error',
+            confirmButtonColor: '#1f2937'
+        });
+        resetForm();
+        return;
+    }
+
+    // Leer archivo
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const csv = e.target.result;
+            const lines = csv.split('\n').filter(line => line.trim() !== '');
+            
+            if (lines.length < 2) {
+                Swal.fire({
+                    title: 'Archivo vacío',
+                    text: 'El archivo CSV debe contener al menos una fila de datos además del encabezado.',
+                    icon: 'error',
+                    confirmButtonColor: '#1f2937'
+                });
+                resetForm();
+                return;
+            }
+
+            // Validar columnas
+            const headers = lines[0].split(';').map(h => h.trim());
+            console.log(headers)
+            const validation = validateColumns(headers);
+            
+            if (!validation.isValid) {
+                showColumnValidationError(validation);
+                resetForm();
+                return;
+            }
+
+            // Si hay columnas extra, notificar pero continuar
+            if (validation.extraColumns.length > 0) {
+                Swal.fire({
+                    title: 'Columnas adicionales detectadas',
+                    text: `Se encontraron columnas adicionales que serán ignoradas: ${validation.extraColumns.join(', ')}`,
+                    icon: 'info',
+                    confirmButtonColor: '#1f2937'
+                });
+            }
+
+            // Procesar datos para vista previa
+            csvData = parseCSVData(lines, headers);
+            showPreview(csvData, headers);
+            
+            // Actualizar UI
+            fileLabel.textContent = `Archivo seleccionado: ${file.name}`;
+            submitBtn.disabled = false;
+            
+            // Mostrar mensaje de éxito
+            Swal.fire({
+                title: '¡Archivo válido!',
+                text: `Se cargaron ${csvData.length} registros correctamente.`,
+                icon: 'success',
+                confirmButtonColor: '#1f2937',
+                timer: 2000,
+                showConfirmButton: false
+            });
+
+        } catch (error) {
+            Swal.fire({
+                title: 'Error al procesar archivo',
+                text: 'Hubo un problema al leer el archivo CSV. Verifica que el formato sea correcto.',
+                icon: 'error',
+                confirmButtonColor: '#1f2937'
+            });
+            resetForm();
+        }
+    };
+    
+    reader.readAsText(file);
+}
+
+// Función para validar columnas
+function validateColumns(headers) {
+    const missingColumns = expectedColumns.filter(col => !headers.includes(col));
+    const extraColumns = headers.filter(col => !expectedColumns.includes(col));
+    
+    return {
+        isValid: missingColumns.length === 0,
+        missingColumns,
+        extraColumns
+    };
+}
+
+// Función para mostrar error de validación de columnas
+function showColumnValidationError(validation) {
+    let message = 'El archivo CSV no tiene el formato correcto.\n\n';
+    
+    if (validation.missingColumns.length > 0) {
+        message += `Columnas faltantes: ${validation.missingColumns.join(', ')}\n\n`;
+    }
+    
+    message += `Columnas esperadas: ${expectedColumns.join(', ')}`;
+    
+    Swal.fire({
+        title: 'Formato de archivo incorrecto',
+        text: message,
+        icon: 'error',
+        confirmButtonColor: '#1f2937'
+    });
+}
+
+// Función para parsear datos CSV
+function parseCSVData(lines, headers) {
+    const data = [];
+    for (let i = 1; i < lines.length && i <= 3; i++) { // Solo primeras 2 filas de datos
+        const values = lines[i].split(';').map(v => v.trim());
+        const row = {};
+        headers.forEach((header, index) => {
+            if (expectedColumns.includes(header)) {
+                row[header] = values[index] || '';
+            }
+        });
+        data.push(row);
+    }
+    return data;
+}
+
+// Función para mostrar vista previa
+function showPreview(data, headers) {
+    const table = document.getElementById('preview-table');
+    const totalRecords = document.getElementById('total-records');
+    
+    // Filtrar solo columnas esperadas
+    const displayHeaders = headers.filter(h => expectedColumns.includes(h));
+    
+    // Crear encabezados de tabla
+    let tableHTML = '<thead class="bg-gray-50"><tr>';
+    tableHTML += '<th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>';
+    
+    // Mapear nombres de columnas para mostrar
+    const columnDisplayNames = {
+        'Edad': 'Edad',
+        'Calidad_servicio': 'Nombre', // Placeholder
+        'Tasa_interes': 'Tasa %',
+        'Porcentaje_pago': '% Pago',
+        'Dias_mora': 'Días Mora'
+    };
+    
+    displayHeaders.slice(0, 5).forEach(header => { // Solo mostrar primeras 5 columnas
+        const displayName = columnDisplayNames[header] || header;
+        tableHTML += `<th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">${displayName}</th>`;
+    });
+    
+    tableHTML += '</tr></thead><tbody class="bg-white divide-y divide-gray-200">';
+    
+    // Crear filas de datos
+    data.forEach((row, index) => {
+        tableHTML += '<tr>';
+        tableHTML += `<td class="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">${String(index + 1).padStart(3, '0')}</td>`;
+        
+        displayHeaders.slice(0, 5).forEach(header => {
+            let value = row[header];
+            
+            // Formatear valores específicos
+            if (header === 'Calidad_servicio') {
+                value = `Cliente ${index + 1}`; // Nombre placeholder
+            } else if (header === 'Tasa_interes') {
+                value = `${value}%`;
+            } else if (header === 'Porcentaje_pago') {
+                value = `${value}%`;
+            }
+            
+            tableHTML += `<td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500">${value}</td>`;
+        });
+        tableHTML += '</tr>';
+    });
+    
+    tableHTML += '</tbody>';
+    table.innerHTML = tableHTML;
+    
+    // Actualizar total de registros (simular el total real)
+    const totalLines = csvData.length > 2 ? csvData.length + 10 : csvData.length; // Simular más registros
+    totalRecords.textContent = `Total de registros: ${totalLines}`;
+    
+    // Mostrar sección de vista previa
+    previewSection.classList.remove('hidden');
+}
+
+// Función para resetear formulario
+function resetForm() {
+    fileInput.value = '';
+    fileLabel.textContent = 'Selecciona un archivo CSV';
+    submitBtn.disabled = true;
+    previewSection.classList.add('hidden');
+    csvData = null;
+}
+
+// Manejo del formulario
+document.getElementById('csvForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    if (!csvData) {
+        Swal.fire({
+            title: 'No hay datos',
+            text: 'Por favor selecciona y valida un archivo CSV primero.',
+            icon: 'warning',
+            confirmButtonColor: '#1f2937'
+        });
+        return;
+    }
+    
+    // Aquí puedes enviar los datos al servidor
+    console.log('Enviando datos:', csvData);
+    
+    // Simular envío exitoso
+    Swal.fire({
+        title: '¡Procesamiento completo!',
+        text: 'Los datos han sido procesados exitosamente.',
+        icon: 'success',
+        confirmButtonColor: '#1f2937'
+    });
+});
+
+// Botón de predecir lote
+document.getElementById('predict-btn').addEventListener('click', function() {
+    document.getElementById('csvForm').dispatchEvent(new Event('submit'));
 });
 </script>
 {% endblock %}

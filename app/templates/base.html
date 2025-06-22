@@ -6,6 +6,7 @@
     <title>{% block title %}{{ titulo }}{% endblock %}</title>
     <Link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -34,12 +35,12 @@
                     </a>
                 </div>
                 {% if request.endpoint == 'main.index' %}
-                <button class="bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors flex items-center space-x-2">
+                <a href="{{ url_for('main.prediccion_individual') }}" class="bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors flex items-center space-x-2">
                     <span>Comenzar Análisis</span>
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                     </svg>
-                </button>
+                </a>
                 {% endif %}
             </div>
         </div>

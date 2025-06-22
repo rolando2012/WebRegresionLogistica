@@ -115,13 +115,13 @@
                     </div>
                     <div class="flex space-x-4">
                         <div class="relative">
-                            <input type="text" id="searchInput" placeholder="Buscar por nombre o ID..." 
+                            <input type="text" id="searchInput" placeholder="Buscar por ID" 
                                    class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                             <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
                         </div>
-                        <button id="exportBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2">
+                        <button id="exportBtn" class="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors flex items-center space-x-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
@@ -137,18 +137,21 @@
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable(0)">
                                     ID <span class="ml-1">⇅</span>
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable(1)">
-                                    Nombre <span class="ml-1">⇅</span>
+                               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable(1)">
+                                    Calidad Servicio <span class="ml-1">⇅</span>
                                 </th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable(2)">
-                                    Edad <span class="ml-1">⇅</span>
+                                    Tasa Interés <span class="ml-1">⇅</span>
                                 </th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable(3)">
-                                    Probabilidad <span class="ml-1">⇅</span>
+                                    Edad <span class="ml-1">⇅</span>
                                 </th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable(4)">
-                                    Riesgo <span class="ml-1">⇅</span>
-                                </th>
+                                Probabilidad <span class="ml-1">⇅</span>
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable(5)">
+                                Riesgo <span class="ml-1">⇅</span>
+                            </th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Estado
                                 </th>
@@ -158,7 +161,8 @@
                             {% for cliente in resultados.datos_detallados %}
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ cliente.id }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ cliente.nombre }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ cliente.calidad_servicio }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ cliente.tasa_interes }}%</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ cliente.edad }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     <div class="flex items-center">
@@ -180,13 +184,30 @@
                                         </span>
                                     {% endif %}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {% if cliente.riesgo == 'ALTO' %}
-                                        <span class="text-red-600">⚠️</span>
-                                    {% else %}
-                                        <span class="text-green-600">✅</span>
-                                    {% endif %}
-                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+  {% if cliente.riesgo == 'ALTO' %}
+    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-red-100 text-red-800 font-medium">
+      <!-- Icono de alerta -->
+      <svg class="w-4 h-4 mr-1 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd"
+              d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.518 11.58c.75 1.333-.214 2.951-1.742 2.951H3.48c-1.528 0-2.492-1.618-1.742-2.95l6.518-11.58zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-4a1 1 0 00-.993.883L9 10v2a1 1 0 001.993.117L11 12v-2a1 1 0 00-1-1z"
+              clip-rule="evenodd" />
+      </svg>
+      
+    </span>
+  {% else %}
+    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-green-100 text-green-800 font-medium">
+      <!-- Icono de check -->
+      <svg class="w-4 h-4 mr-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd"
+              d="M16.707 5.293a1 1 0 010 1.414L8.414 15 5.293 11.879a1 1 0 00-1.414 1.415l4 4a1 1 0 001.414 0l9-9a1 1 0 00-1.414-1.415l-8.293 8.292-3.586-3.585a1 1 0 011.414-1.415L8.414 13l8.293-8.293a1 1 0 011.414 0z"
+              clip-rule="evenodd" />
+      </svg>
+      
+    </span>
+  {% endif %}
+</td>
+
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -330,9 +351,9 @@ document.getElementById('searchInput').addEventListener('input', function() {
     for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
         const id = row.cells[0].textContent.toLowerCase();
-        const nombre = row.cells[1].textContent.toLowerCase();
-        
-        if (id.includes(searchTerm) || nombre.includes(searchTerm)) {
+        const calidadServicio = row.cells[1].textContent.toLowerCase();
+
+        if (id.includes(searchTerm) ) {
             row.style.display = '';
             visibleCount++;
         } else {
@@ -365,13 +386,17 @@ function sortTable(columnIndex) {
         let bValue = b.cells[columnIndex].textContent.trim();
         
         // Convertir a número si es posible
-        if (columnIndex === 0 || columnIndex === 2) { // ID o Edad
-            aValue = parseInt(aValue);
-            bValue = parseInt(bValue);
-        } else if (columnIndex === 3) { // Probabilidad
-            aValue = parseFloat(aValue.replace('%', ''));
-            bValue = parseFloat(bValue.replace('%', ''));
-        }
+        // Convertir a número si es posible
+            if (columnIndex === 0 || columnIndex === 1 || columnIndex === 3) { // ID, Calidad Servicio, Edad
+                aValue = parseInt(aValue);
+                bValue = parseInt(bValue);
+            } else if (columnIndex === 2) { // Tasa Interés
+                aValue = parseFloat(aValue.replace('%', ''));
+                bValue = parseFloat(bValue.replace('%', ''));
+            } else if (columnIndex === 4) { // Probabilidad
+                aValue = parseFloat(aValue.replace('%', ''));
+                bValue = parseFloat(bValue.replace('%', ''));
+            }
         
         if (sortDirection[columnIndex] === 'asc') {
             return aValue > bValue ? 1 : -1;

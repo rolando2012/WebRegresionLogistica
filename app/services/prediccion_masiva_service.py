@@ -90,6 +90,8 @@ class PrediccionMasivaService:
             for i in range(total):
                 datos_detallados.append({
                     "id":              f"{i+1:03d}",
+                    'calidad_servicio': int(df.iloc[i]['calidad_servicio']),
+                    'tasa_interes': float(df.iloc[i]['tasa_interes']),
                     "edad":            int(df.iloc[i]["edad"]),
                     "probabilidad":    float(probs[i]),
                     "prediccion":      int(preds[i]),

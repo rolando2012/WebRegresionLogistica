@@ -9,7 +9,7 @@ class Config:
     SESSION_TYPE = 'filesystem'
     SESSION_FILE_DIR = os.path.join(os.path.dirname(__file__), 'instance', 'sessions')
     SESSION_PERMANENT = True
-    PERMANENT_SESSION_LIFETIME = timedelta(seconds=120)
+    PERMANENT_SESSION_LIFETIME = timedelta(minutes=30)
     SESSION_USE_SIGNER = True
     # Número máximo de sesiones antes de limpiar las más antiguas
     SESSION_FILE_THRESHOLD = 500

@@ -166,13 +166,33 @@
 
                 <!-- Sección: Función Sigmoide -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-2">Función Sigmoide del Modelo</h2>
-                    <p class="text-gray-600 mb-6">Transformación de probabilidades del modelo logístico</p>
-                    
-                    <div class="relative h-80">
-                        <canvas id="sigmoidChart"></canvas>
-                    </div>
+                <h2 class="text-xl font-semibold text-gray-900 mb-2">Función Sigmoide del Modelo</h2>
+                <p class="text-gray-600 mb-6">Transformación de probabilidades del modelo logístico</p>
+                
+                <div class="relative h-80">
+                    <canvas id="sigmoidChart"></canvas>
                 </div>
+
+                <!-- Descripción debajo del gráfico -->
+                <div class="mt-4 text-sm text-gray-700 space-y-2">
+                    Cada punto <em>z</em> en el eje x es la suma ponderada de las variables de cliente más un sesgo:</p>
+                    <pre class="bg-gray-100 p-2 rounded text-xs overflow-auto">
+                z = w₁·edad  + w₂·tasa_interes  + w₃·porcentaje_pago  + w₄·dias_de_mora  + w₅·plazo_credito_meses 
+                + w₆·num_microseguros  + w₇·n_productos_vigentes  + w₈·n_creditos_vigentes  + w₉·calidad_servicio 
+                + w₁₀·estado_ahorro_activo  + b
+                    </pre>
+                    <p>
+                    • Cuando <em>z</em> es muy negativo → σ(z)≈0 → <strong>baja probabilidad de deserción</strong> (el cliente probablemente se queda).<br>
+                    • Cuando <em>z</em>≈0 → σ(z)=0.5 → <strong>incertidumbre</strong> (frontera de decisión).<br>
+                    • Cuando <em>z</em> es muy positivo → σ(z)≈1 → <strong>alta probabilidad de deserción</strong> (el cliente probablemente deserta).
+                    </p>
+                    <p>
+                    Cada peso <code>wᵢ</code> indica la influencia de esa variable en la probabilidad final.  
+                    Por ejemplo, un <code>w₄</code> grande y positivo para <em>dias_de_mora</em> implicará que más días de mora aumentan el riesgo de deserción.
+                    </p>
+                </div>
+                </div>
+
 
                 <div id="rocSection"></div>
                 <div id="confMatrixSection"></div>

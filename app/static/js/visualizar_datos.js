@@ -658,112 +658,121 @@ function createSigmoidFunction(data) {
 
 // Función para crear el gráfico de coeficientes
 function createCoeficientesChart(data) {
-    const ctx = document.getElementById('coeficientesChart').getContext('2d');
-    
-    const labels = data.coeficientes.map(item => 
-        item.variable.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
-    );
-    const valores = data.coeficientes.map(item => item.coeficiente_beta);
-    
-    // Colores basados en si el coeficiente es positivo o negativo
-    const backgroundColors = valores.map(val => 
-        val >= 0 ? colors.success : colors.secondary
-    );
-    const borderColors = valores.map(val => 
-        val >= 0 ? '#059669' : '#DC2626'
-    );
-    
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Coeficiente β',
-                data: valores,
-                backgroundColor: backgroundColors,
-                borderColor: borderColors,
-                borderWidth: 2,
-                borderRadius: 8,
-                borderSkipped: false,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            indexAxis: 'y', // Barras horizontales
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            const value = context.parsed.x;
-                            const impact = value > 0 ? 'Aumenta deserción' : 'Reduce deserción';
-                            return `β = ${value.toFixed(4)} (${impact})`;
-                        }
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    beginAtZero: true,
-                    grid: {
-                        color: '#E5E7EB'
-                    },
-                    title: {
-                        display: true,
-                        text: 'Coeficiente β',
-                        font: {
-                            weight: 'bold'
-                        }
-                    }
-                },
-                y: {
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        font: {
-                            size: 11
-                        }
-                    }
-                }
+  const ctx = document.getElementById('coeficientesChart').getContext('2d');
+  
+  const labels = data.coeficientes.map(item =>
+    item.variable.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+  );
+  const valores = data.coeficientes.map(item => item.coeficiente_beta);
+  
+  // Colores: rojo para β > 0 (aumenta deserción), verde para β < 0 (reduce deserción)
+  const backgroundColors = valores.map((val, i) => {
+    if (data.coeficientes[i].variable === 'tasa_interes') {
+      // Naranja para enfatizar tasa de interés
+      return 'rgba(249, 115, 22, 0.6)';
+    }
+    return val > 0
+      ? 'rgba(220, 38, 38, 0.6)'   // rojo
+      : 'rgba(16, 185, 129, 0.6)'; // verde
+  });
+  const borderColors = valores.map((val, i) => {
+    if (data.coeficientes[i].variable === 'tasa_interes') {
+      return 'rgba(249, 115, 22, 1)';
+    }
+    return val > 0 ? '#DC2626' : '#10B981';
+  });
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Coeficiente β',
+        data: valores,
+        backgroundColor: backgroundColors,
+        borderColor: borderColors,
+        borderWidth: 2,
+        borderRadius: 8,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      indexAxis: 'y',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              const v = ctx.parsed.x;
+              const impact = v > 0 ? 'Aumenta deserción' : 'Reduce deserción';
+              return `β = ${v.toFixed(4)} (${impact})`;
             }
+          }
         }
-    });
-    
-    // Llenar la tabla
-    fillCoeficientesTable(data);
+      },
+      scales: {
+        x: {
+          beginAtZero: true,
+          grid: { color: '#E5E7EB' },
+          title: {
+            display: true,
+            text: 'Coeficiente β',
+            font: { weight: 'bold' }
+          }
+        },
+        y: {
+          grid: { display: false },
+          ticks: { font: { size: 11 } }
+        }
+      }
+    }
+  });
+
+  fillCoeficientesTable(data);
 }
 
-// Función para llenar la tabla de coeficientes
+// Función para llenar la tabla de coeficientes con descripción desplegable
 function fillCoeficientesTable(data) {
-    const tableBody = document.getElementById('coeficientesTable');
-    
-    const rows = data.coeficientes.map(item => {
-        const variableFormatted = item.variable.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-        const coeficiente = item.coeficiente_beta.toFixed(4);
-        const impacto = item.coeficiente_beta >= 0 ? 'Aumenta deserción' : 'Reduce deserción';
-        const impactoColor = item.coeficiente_beta >= 0 ? 'text-red-600' : 'text-green-600';
-        
-        return `
-            <tr class="hover:bg-gray-50">
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    ${variableFormatted}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-mono">
-                    ${coeficiente}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm ${impactoColor} font-medium">
-                    ${impacto}
-                </td>
-            </tr>
-        `;
-    }).join('');
-    
-    tableBody.innerHTML = rows;
+  const tableBody = document.getElementById('coeficientesTable');
+  const descs = {
+    edad: 'Clientes más mayores tienen mayor riesgo de desertar.',
+    tasa_interes: 'Tasas altas incrementan fuertemente la probabilidad de abandono.',
+    porcentaje_pago: 'Pagos mayores reducen el riesgo de deserción.',
+    dias_de_mora: 'Más días de mora se asocian a mayor deserción.',
+    plazo_credito_meses: 'Plazos más largos disminuyen la deserción.',
+    num_microseguros: 'Más microseguros reducen ligeramente la deserción.',
+    n_productos_vigentes: 'Mayor cartera de productos disminuye la deserción.',
+    n_creditos_vigentes: 'Más créditos vigentes aumentan el riesgo.',
+    calidad_servicio: 'Un servicio excelente mantiene al cliente fiel.',
+    estado_ahorro_activo: 'Ahorro activo disminuye notablemente la deserción.'
+  };
+
+  const rows = data.coeficientes.map(item => {
+    const key = item.variable;
+    const label = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    const coef = item.coeficiente_beta.toFixed(4);
+    const texto = descs[key] || '';
+
+    return `
+      <tr class="hover:bg-gray-50">
+        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+          ${label}
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-mono">
+          ${coef}
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+          ${texto}
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  tableBody.innerHTML = rows;
 }
+
 
 // Función para mostrar error si no se pueden cargar los datos
 function showError() {

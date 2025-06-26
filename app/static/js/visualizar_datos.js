@@ -298,73 +298,42 @@ function createVariableImportance(data) {
     });
 }
 
-// 4. Crear Métricas del Modelo
+// 4. Crear Métrica de Precisión
 function createMetrics(data) {
-    const metricsContainer = document.getElementById('metricsContainer');
-    if (!metricsContainer) return;
+  const metricsContainer = document.getElementById('metricsContainer');
+  if (!metricsContainer) return;
 
-    const metrics = data.metrics || {};
-    const cmData = data.cmData || {};
-    const rocData = data.rocData || {};
+  const metrics = data.metrics || {};
+  const precision = (metrics.precision * 100).toFixed(1) || '0.0';
 
-    const precision = (metrics.precision * 100).toFixed(1) || '0.0';
-    const recall = (metrics.recall * 100).toFixed(1) || '0.0';
-    const f1 = (metrics.f1 * 100).toFixed(1) || '0.0';
-    const auc = (rocData.auc * 100).toFixed(1) || '0.0';
-
-    metricsContainer.innerHTML = `
-        <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
-            <div class="flex items-center justify-between mb-4">
-                <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                </div>
-                <div class="text-right">
-                    <div class="text-3xl font-bold text-blue-600">${precision}%</div>
-                    <div class="text-sm text-blue-500 font-medium">Precisión</div>
-                </div>
-            </div>
-            <div class="text-sm text-gray-600">
-                Porcentaje de predicciones positivas correctas
-            </div>
+  metricsContainer.innerHTML = `
+    <div class="max-w-xs bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200 mx-auto">
+      <div class="flex items-center justify-between mb-4">
+        <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
         </div>
-
-        <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
-            <div class="flex items-center justify-between mb-4">
-                <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                    </svg>
-                </div>
-                <div class="text-right">
-                    <div class="text-3xl font-bold text-green-600">${recall}%</div>
-                    <div class="text-sm text-green-500 font-medium">Recall</div>
-                </div>
-            </div>
-            <div class="text-sm text-gray-600">
-                Porcentaje de casos positivos detectados
-            </div>
+        <div class="text-right">
+          <div class="text-4xl font-bold text-blue-600">${precision}%</div>
+          <div class="text-sm text-blue-500 font-medium">Precisión</div>
         </div>
-
-        <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
-            <div class="flex items-center justify-between mb-4">
-                <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                    </svg>
-                </div>
-                <div class="text-right">
-                    <div class="text-3xl font-bold text-purple-600">${f1}%</div>
-                    <div class="text-sm text-purple-500 font-medium">F1-Score</div>
-                </div>
-            </div>
-            <div class="text-sm text-gray-600">
-                Media armónica de precisión y recall
-            </div>
-        </div>
-    `;
+      </div>
+      <!-- Barra de progreso -->
+      <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
+        <div class="h-2 rounded-full" style="width: ${precision}%"></div>
+      </div>
+      <!-- Descripción ampliada -->
+      <div class="text-sm text-gray-700 space-y-2">
+        <p><strong>Fórmula:</strong> <code>Precisión = TP / (TP + FP)</code></p>
+        <p>Este valor indica qué porcentaje de las veces que el modelo predijo "positivo", realmente fue positivo.</p>
+        <p>Un valor alto sugiere pocas falsas alarmas (FP) y confianza en las predicciones positivas.</p>
+      </div>
+    </div>
+  `;
 }
+
 
 // 5. Crear Curva ROC
 function createROCCurve(data) {

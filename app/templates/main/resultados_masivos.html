@@ -304,30 +304,69 @@ const pieChart = new Chart(pieCtx, {
     }
 });
 
-// Gráfico Sigmoide
+// Gráfico Sigmoide - MODIFICACIÓN COMPLETA
 const sigmoidCtx = document.getElementById('sigmoidChart').getContext('2d');
+
+// Generar datos para la línea sigmoide suave
+const generateSigmoidLine = () => {
+    const points = [];
+    const zScores = datosResultados.datos_sigmoide.map(item => item.z_score);
+    const minZ = Math.min(...zScores);
+    const maxZ = Math.max(...zScores);
+    
+    // Generar 100 puntos para una línea suave
+    for (let i = 0; i <= 100; i++) {
+        const z = minZ + (maxZ - minZ) * (i / 100);
+        const sigmoid = 1 / (1 + Math.exp(-z));
+        points.push({ x: z, y: sigmoid });
+    }
+    return points;
+};
+
 const sigmoidChart = new Chart(sigmoidCtx, {
     type: 'scatter',
     data: {
-        datasets: [{
-            label: 'Predicciones',
-            data: datosResultados.datos_sigmoide.map(item => ({
-                x: item.z_score,
-                y: item.sigmoide
-            })),
-            backgroundColor: datosResultados.datos_sigmoide.map(item => 
-                item.prediccion === 1 ? '#EF4444' : '#10B981'
-            ),
-            borderColor: datosResultados.datos_sigmoide.map(item => 
-                item.prediccion === 1 ? '#DC2626' : '#059669'
-            ),
-            borderWidth: 1,
-            pointRadius: 4,
-            pointHoverRadius: 6
-        }]
+        datasets: [
+            // Dataset 1: Puntos de predicciones
+            {
+                label: 'Predicciones',
+                data: datosResultados.datos_sigmoide.map(item => ({
+                    x: item.z_score,
+                    y: item.sigmoide
+                })),
+                backgroundColor: datosResultados.datos_sigmoide.map(item => 
+                    item.prediccion === 1 ? '#EF4444' : '#10B981'
+                ),
+                borderColor: datosResultados.datos_sigmoide.map(item => 
+                    item.prediccion === 1 ? '#DC2626' : '#059669'
+                ),
+                borderWidth: 1,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                showLine: false
+            },
+            // Dataset 2: Línea sigmoide segmentada
+            {
+                label: 'Función Sigmoide',
+                data: generateSigmoidLine(),
+                backgroundColor: 'transparent',
+                borderColor: '#3B82F6', // Azul
+                borderWidth: 2,
+                pointRadius: 0,
+                pointHoverRadius: 0,
+                showLine: true,
+                borderDash: [5, 5], // Línea segmentada
+                fill: false,
+                tension: 0.4 // Suavizar la línea
+            }
+        ]
     },
     options: {
         responsive: true,
+        interaction: {
+            intersect: false,
+            mode: 'point'
+        },
         scales: {
             x: {
                 title: {
@@ -354,14 +393,28 @@ const sigmoidChart = new Chart(sigmoidCtx, {
         },
         plugins: {
             legend: {
-                display: false
+                display: true,
+                position: 'top',
+                labels: {
+                    filter: function(legendItem, chartData) {
+                        // Solo mostrar la leyenda de la función sigmoide
+                        return legendItem.datasetIndex === 1;
+                    }
+                }
             },
             tooltip: {
+                filter: function(tooltipItem) {
+                    // Solo mostrar tooltip para los puntos de predicción (dataset 0)
+                    return tooltipItem.datasetIndex === 0;
+                },
                 callbacks: {
                     label: function(context) {
-                        const prediccion = datosResultados.datos_sigmoide[context.dataIndex].prediccion;
-                        const estado = prediccion === 1 ? 'Desertor' : 'Fiel';
-                        return `Z-Score: ${context.parsed.x.toFixed(3)}, Probabilidad: ${(context.parsed.y * 100).toFixed(1)}%, Estado: ${estado}`;
+                        if (context.datasetIndex === 0) {
+                            const prediccion = datosResultados.datos_sigmoide[context.dataIndex].prediccion;
+                            const estado = prediccion === 1 ? 'Desertor' : 'Fiel';
+                            return `Z-Score: ${context.parsed.x.toFixed(3)}, Probabilidad: ${(context.parsed.y * 100).toFixed(1)}%, Estado: ${estado}`;
+                        }
+                        return '';
                     }
                 }
             }

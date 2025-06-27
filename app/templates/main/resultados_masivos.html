@@ -114,21 +114,30 @@
                         <p class="text-gray-600">Tabla interactiva con todas las predicciones</p>
                     </div>
                     <div class="flex space-x-4">
-                        <div class="relative">
-                            <input type="text" id="searchInput" placeholder="Buscar por ID" 
-                                   class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                            </svg>
-                        </div>
-                        <!-- REEMPLAZAR el botón existente CON: -->
-                <button id="exportPdfBtn" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center space-x-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                    </svg>
-                    <span>Exportar PDF</span>
-                </button>
+                    <div class="relative">
+                        <input type="text" id="searchInput" placeholder="Buscar por ID" 
+                            class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
                     </div>
+                    
+                    <!-- Botón Personalizar Reporte -->
+                    <button id="personalizarBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
+                        </svg>
+                        <span>Personalizar Reporte</span>
+                    </button>
+                    
+                    <!-- Botón Exportar PDF -->
+                    <button id="exportPdfBtn" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                        <span>Exportar PDF</span>
+                    </button>
+                </div>
                 </div>
 
                 <div class="overflow-x-auto">
@@ -513,5 +522,256 @@ document.getElementById('exportPdfBtn').addEventListener('click', function() {
         };
     }, 5000);
 });
+// Variables globales para el modal
+let clientesSeleccionados = [];
+let todosLosClientes = [];
+
+// Inicializar modal personalizar
+document.addEventListener('DOMContentLoaded', function() {
+    // Cargar todos los clientes desde los datos del servidor
+    todosLosClientes = datosResultados.datos_detallados || [];
+    
+    // Event listeners para el modal
+    document.getElementById('personalizarBtn').addEventListener('click', abrirModalPersonalizar);
+    document.getElementById('closePersonalizarModal').addEventListener('click', cerrarModalPersonalizar);
+    document.getElementById('cancelPersonalizar').addEventListener('click', cerrarModalPersonalizar);
+    
+    // Event listeners para filtros y selección
+    document.getElementById('selectAllCheckbox').addEventListener('change', toggleSelectAll);
+    document.getElementById('headerCheckbox').addEventListener('change', toggleSelectAll);
+    document.getElementById('filterRiesgo').addEventListener('change', aplicarFiltros);
+    document.getElementById('filterSearch').addEventListener('input', aplicarFiltros);
+    
+    // Event listener para procesar lote
+    document.getElementById('procesarLoteBtn').addEventListener('click', procesarLoteSeleccionado);
+});
+
+function abrirModalPersonalizar() {
+    document.getElementById('personalizarModal').classList.remove('hidden');
+    cargarDatosEnModal();
+}
+
+function cerrarModalPersonalizar() {
+    document.getElementById('personalizarModal').classList.add('hidden');
+    limpiarSeleccion();
+}
+
+function cargarDatosEnModal() {
+    const tbody = document.getElementById('personalizarTableBody');
+    tbody.innerHTML = '';
+    
+    todosLosClientes.forEach((cliente, index) => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-gray-50';
+        row.dataset.clienteIndex = index;
+        
+        row.innerHTML = `
+            <td class="px-3 py-4 whitespace-nowrap">
+                <input type="checkbox" class="cliente-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500" 
+                       data-cliente-id="${cliente.id}" data-index="${index}">
+            </td>
+            <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${cliente.id}</td>
+            <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">${cliente.calidad_servicio}</td>
+            <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">${cliente.tasa_interes}%</td>
+            <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
+                ${cliente.estado_ahorro_activo == 1 ? 
+                    '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Activo</span>' : 
+                    '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">Inactivo</span>'
+                }
+            </td>
+            <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">${cliente.n_productos_vigentes}</td>
+            <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">${cliente.edad}</td>
+            <td class="px-3 py-4 whitespace-nowrap">
+                ${cliente.riesgo === 'ALTO' ? 
+                    '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">ALTO</span>' : 
+                    '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">BAJO</span>'
+                }
+            </td>
+        `;
+        
+        tbody.appendChild(row);
+    });
+    
+    // Añadir event listeners a los checkboxes
+    document.querySelectorAll('.cliente-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', manejarSeleccionCliente);
+    });
+}
+
+function toggleSelectAll() {
+    const selectAllChecked = document.getElementById('selectAllCheckbox').checked || 
+                           document.getElementById('headerCheckbox').checked;
+    
+    document.querySelectorAll('.cliente-checkbox:not([style*="display: none"])').forEach(checkbox => {
+        checkbox.checked = selectAllChecked;
+    });
+    
+    // Sincronizar ambos checkboxes
+    document.getElementById('selectAllCheckbox').checked = selectAllChecked;
+    document.getElementById('headerCheckbox').checked = selectAllChecked;
+    
+    actualizarSeleccion();
+}
+
+function manejarSeleccionCliente() {
+    actualizarSeleccion();
+}
+
+function actualizarSeleccion() {
+    const checkboxes = document.querySelectorAll('.cliente-checkbox');
+    const checkboxesVisibles = document.querySelectorAll('.cliente-checkbox:not([style*="display: none"])');
+    const seleccionados = document.querySelectorAll('.cliente-checkbox:checked');
+    
+    // Actualizar contador
+    document.getElementById('selectedCount').textContent = `${seleccionados.length} clientes seleccionados`;
+    
+    // Habilitar/deshabilitar botón
+    document.getElementById('procesarLoteBtn').disabled = seleccionados.length === 0;
+    
+    // Actualizar estado del select all
+    const todosSeleccionados = checkboxesVisibles.length > 0 && 
+                              Array.from(checkboxesVisibles).every(cb => cb.checked);
+    document.getElementById('selectAllCheckbox').checked = todosSeleccionados;
+    document.getElementById('headerCheckbox').checked = todosSeleccionados;
+}
+
+function aplicarFiltros() {
+    const filtroRiesgo = document.getElementById('filterRiesgo').value;
+    const filtroBusqueda = document.getElementById('filterSearch').value.toLowerCase();
+    
+    const filas = document.querySelectorAll('#personalizarTableBody tr');
+    
+    filas.forEach(fila => {
+        const index = parseInt(fila.dataset.clienteIndex);
+        const cliente = todosLosClientes[index];
+        
+        let mostrar = true;
+        
+        // Filtro por riesgo
+        if (filtroRiesgo && cliente.riesgo !== filtroRiesgo) {
+            mostrar = false;
+        }
+        
+        // Filtro por búsqueda
+        if (filtroBusqueda && !cliente.id.toString().toLowerCase().includes(filtroBusqueda)) {
+            mostrar = false;
+        }
+        
+        if (mostrar) {
+            fila.style.display = '';
+            fila.querySelector('.cliente-checkbox').style.display = '';
+        } else {
+            fila.style.display = 'none';
+            fila.querySelector('.cliente-checkbox').style.display = 'none';
+        }
+    });
+    
+    actualizarSeleccion();
+}
+
+function limpiarSeleccion() {
+    clientesSeleccionados = [];
+    document.querySelectorAll('.cliente-checkbox').forEach(cb => cb.checked = false);
+    document.getElementById('selectAllCheckbox').checked = false;
+    document.getElementById('headerCheckbox').checked = false;
+    document.getElementById('filterRiesgo').value = '';
+    document.getElementById('filterSearch').value = '';
+    document.getElementById('selectedCount').textContent = '0 clientes seleccionados';
+    document.getElementById('procesarLoteBtn').disabled = true;
+}
+
+function procesarLoteSeleccionado() {
+    const seleccionados = document.querySelectorAll('.cliente-checkbox:checked');
+    
+    if (seleccionados.length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Sin selección',
+            text: 'Debe seleccionar al menos un cliente para procesar.',
+            confirmButtonColor: '#EF4444'
+        });
+        return;
+    }
+    
+    // Obtener datos de clientes seleccionados
+    const clientesParaProcesar = [];
+    seleccionados.forEach(checkbox => {
+        const index = parseInt(checkbox.dataset.index);
+        const cliente = todosLosClientes[index];
+        clientesParaProcesar.push({
+            id: cliente.id,
+            edad: cliente.edad,
+            tasa_interes: cliente.tasa_interes,
+            porcentaje_pago: cliente.porcentaje_pago || 100,
+            dias_de_mora: cliente.dias_de_mora || 0,
+            plazo_credito_meses: cliente.plazo_credito_meses || 12,
+            num_microseguros: cliente.num_microseguros || 0,
+            n_productos_vigentes: cliente.n_productos_vigentes,
+            n_creditos_vigentes: cliente.n_creditos_vigentes || 1,
+            calidad_servicio: cliente.calidad_servicio,
+            estado_ahorro_activo: cliente.estado_ahorro_activo
+        });
+    });
+    
+    // Mostrar loading
+    Swal.fire({
+        title: 'Procesando lote personalizado...',
+        html: `Se están procesando ${clientesParaProcesar.length} clientes seleccionados`,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+    
+    // Enviar al servidor
+    fetch('/api/procesar-lote', {
+        method: 'POST',
+        credentials: 'include',  
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            csv_data: clientesParaProcesar
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: '¡Lote procesado exitosamente!',
+                text: data.message,
+                confirmButtonText: 'Ver resultados',
+                confirmButtonColor: '#10B981'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = data.redirect_url;
+                }
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al procesar',
+                text: data.error || 'Hubo un problema al procesar el lote',
+                confirmButtonColor: '#EF4444'
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error de conexión',
+            text: 'No se pudo conectar con el servidor',
+            confirmButtonColor: '#EF4444'
+        });
+    });
+    
+    // Cerrar modal
+    cerrarModalPersonalizar();
+}
 </script>
+{% include 'main/modal_personalizar.html' %}
 {% endblock %}

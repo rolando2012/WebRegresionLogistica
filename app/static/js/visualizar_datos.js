@@ -745,7 +745,7 @@ function fillCoeficientesTable(data) {
     num_microseguros: 'Más microseguros reducen ligeramente la deserción.',
     n_productos_vigentes: 'Mayor cartera de productos disminuye la deserción.',
     n_creditos_vigentes: 'Más créditos vigentes aumentan el riesgo.',
-    calidad_servicio: 'Un servicio excelente mantiene al cliente fiel.',
+    calidad_servicio: 'Una baja calidad de servicio incrementa la deserción.',
     estado_ahorro_activo: 'Ahorro activo disminuye notablemente la deserción.'
   };
 

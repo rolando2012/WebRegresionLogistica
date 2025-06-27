@@ -9,8 +9,8 @@
             <!-- Visualizar Datos -->
             <a href="{{ url_for('main.visualizar_datos') }}" class="block p-3 rounded-lg hover:bg-gray-100 transition-colors">
                 <div class="flex items-center space-x-3">
-                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    <svg class="w-14 h-14 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path d="M0 13h16v2h-16zM2 9h2v3h-2zM5 5h2v7h-2zM8 8h2v4h-2zM11 2h2v10h-2z"></path>
                     </svg>
                     <div>
                         <div class="font-medium text-gray-900">Visualizar Datos de Entrenamiento</div>
@@ -794,6 +794,68 @@ function procesarLoteSeleccionado() {
     
     // Cerrar modal
     cerrarModalPersonalizar();
+}
+
+// Variables para el ordenamiento del modal
+let modalSortDirection = {};
+
+function sortModalTable(columnIndex) {
+    const tbody = document.getElementById('personalizarTableBody');
+    const rows = Array.from(tbody.getElementsByTagName('tr'));
+    
+    // Determinar dirección de ordenamiento
+    if (!modalSortDirection[columnIndex]) {
+        modalSortDirection[columnIndex] = 'asc';
+    } else {
+        modalSortDirection[columnIndex] = modalSortDirection[columnIndex] === 'asc' ? 'desc' : 'asc';
+    }
+    
+    // Ordenar filas
+    rows.sort((a, b) => {
+        let aValue = a.cells[columnIndex].textContent.trim();
+        let bValue = b.cells[columnIndex].textContent.trim();
+        
+        // Convertir a número si es posible según la columna
+        if (columnIndex === 1 || columnIndex === 2 || columnIndex === 5 || columnIndex === 6) { // ID, Calidad Servicio, Productos, Edad
+            aValue = parseInt(aValue);
+            bValue = parseInt(bValue);
+        } else if (columnIndex === 3) { // Tasa Interés
+            aValue = parseFloat(aValue.replace('%', ''));
+            bValue = parseFloat(bValue.replace('%', ''));
+        } else if (columnIndex === 4) { // Estado Ahorro - ordenar por texto
+            aValue = aValue.toLowerCase();
+            bValue = bValue.toLowerCase();
+        } else if (columnIndex === 7) { // Riesgo - ordenar por texto
+            aValue = aValue.toLowerCase();
+            bValue = bValue.toLowerCase();
+        }
+        
+        if (modalSortDirection[columnIndex] === 'asc') {
+            return aValue > bValue ? 1 : -1;
+        } else {
+            return aValue < bValue ? 1 : -1;
+        }
+    });
+    
+    // Reordenar filas en el DOM
+    rows.forEach(row => tbody.appendChild(row));
+    
+    // Actualizar indicadores visuales de ordenamiento
+    const table = tbody.closest('table');
+    const headers = table.getElementsByTagName('th');
+    for (let i = 0; i < headers.length; i++) {
+        const span = headers[i].querySelector('span');
+        if (span) {
+            if (i === columnIndex) {
+                span.textContent = modalSortDirection[columnIndex] === 'asc' ? '↑' : '↓';
+            } else {
+                span.textContent = '⇅';
+            }
+        }
+    }
+    
+    // Actualizar selección después del ordenamiento
+    actualizarSeleccion();
 }
 </script>
 {% include 'main/modal_personalizar.html' %}

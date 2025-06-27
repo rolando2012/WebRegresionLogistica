@@ -562,7 +562,7 @@ function cargarDatosEnModal() {
     
     todosLosClientes.forEach((cliente, index) => {
         const row = document.createElement('tr');
-        row.className = 'hover:bg-gray-50';
+        row.className = 'hover:bg-gray-50 cursor-pointer'; // AÑADIR cursor-pointer
         row.dataset.clienteIndex = index;
         
         row.innerHTML = `
@@ -589,6 +589,16 @@ function cargarDatosEnModal() {
             </td>
         `;
         
+        // NUEVO: Event listener para click en la fila
+        row.addEventListener('click', function(e) {
+            // Solo si no se hizo click en el checkbox directamente
+            if (e.target.type !== 'checkbox') {
+                const checkbox = row.querySelector('.cliente-checkbox');
+                checkbox.checked = !checkbox.checked;
+                manejarSeleccionCliente();
+            }
+        });
+        
         tbody.appendChild(row);
     });
     
@@ -602,7 +612,10 @@ function toggleSelectAll() {
     const selectAllChecked = document.getElementById('selectAllCheckbox').checked || 
                            document.getElementById('headerCheckbox').checked;
     
-    document.querySelectorAll('.cliente-checkbox:not([style*="display: none"])').forEach(checkbox => {
+    // NUEVO: Obtener solo checkboxes visibles
+    const checkboxesVisibles = document.querySelectorAll('.cliente-checkbox:not([style*="display: none"])');
+    
+    checkboxesVisibles.forEach(checkbox => {
         checkbox.checked = selectAllChecked;
     });
     
@@ -618,9 +631,9 @@ function manejarSeleccionCliente() {
 }
 
 function actualizarSeleccion() {
-    const checkboxes = document.querySelectorAll('.cliente-checkbox');
     const checkboxesVisibles = document.querySelectorAll('.cliente-checkbox:not([style*="display: none"])');
     const seleccionados = document.querySelectorAll('.cliente-checkbox:checked');
+    const seleccionadosVisibles = document.querySelectorAll('.cliente-checkbox:checked:not([style*="display: none"])');
     
     // Actualizar contador
     document.getElementById('selectedCount').textContent = `${seleccionados.length} clientes seleccionados`;
@@ -628,11 +641,12 @@ function actualizarSeleccion() {
     // Habilitar/deshabilitar botón
     document.getElementById('procesarLoteBtn').disabled = seleccionados.length === 0;
     
-    // Actualizar estado del select all
-    const todosSeleccionados = checkboxesVisibles.length > 0 && 
-                              Array.from(checkboxesVisibles).every(cb => cb.checked);
-    document.getElementById('selectAllCheckbox').checked = todosSeleccionados;
-    document.getElementById('headerCheckbox').checked = todosSeleccionados;
+    // CORREGIDO: Actualizar estado del select all solo basado en elementos visibles
+    const todosVisiblesSeleccionados = checkboxesVisibles.length > 0 && 
+                                      seleccionadosVisibles.length === checkboxesVisibles.length;
+    
+    document.getElementById('selectAllCheckbox').checked = todosVisiblesSeleccionados;
+    document.getElementById('headerCheckbox').checked = todosVisiblesSeleccionados;
 }
 
 function aplicarFiltros() {
@@ -693,11 +707,13 @@ function procesarLoteSeleccionado() {
         return;
     }
     
-    // Obtener datos de clientes seleccionados
+    // CORREGIDO: Obtener datos completos de clientes seleccionados
     const clientesParaProcesar = [];
     seleccionados.forEach(checkbox => {
         const index = parseInt(checkbox.dataset.index);
         const cliente = todosLosClientes[index];
+        
+        // MANTENER TODOS LOS DATOS ORIGINALES
         clientesParaProcesar.push({
             id: cliente.id,
             edad: cliente.edad,
@@ -709,10 +725,17 @@ function procesarLoteSeleccionado() {
             n_productos_vigentes: cliente.n_productos_vigentes,
             n_creditos_vigentes: cliente.n_creditos_vigentes || 1,
             calidad_servicio: cliente.calidad_servicio,
-            estado_ahorro_activo: cliente.estado_ahorro_activo
+            estado_ahorro_activo: cliente.estado_ahorro_activo,
+            // PRESERVAR DATOS ADICIONALES SI EXISTEN
+            probabilidad: cliente.probabilidad,
+            prediccion: cliente.prediccion,
+            riesgo: cliente.riesgo,
+            z_score: cliente.z_score,
+            sigmoide: cliente.sigmoide
         });
     });
     
+    // Resto de la función permanece igual...
     // Mostrar loading
     Swal.fire({
         title: 'Procesando lote personalizado...',

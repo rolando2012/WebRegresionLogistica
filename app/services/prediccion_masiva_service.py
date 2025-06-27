@@ -88,35 +88,45 @@ class PrediccionMasivaService:
 
             datos_detallados = []
             for i in range(total):
+                # CORREGIDO: Usar el ID original del CSV si existe, sino generar uno
+                cliente_id = df.iloc[i].get('id', f"{i+1:03d}")
+                
                 datos_detallados.append({
-                    "id":              f"{i+1:03d}",
+                    "id": str(cliente_id),  # Mantener el ID original
                     'calidad_servicio': int(df.iloc[i]['calidad_servicio']),
                     'tasa_interes': float(df.iloc[i]['tasa_interes']),
-                    'estado_ahorro_activo': int(df.iloc[i]['estado_ahorro_activo']),  # NUEVA LÍNEA
-                    'n_productos_vigentes': int(df.iloc[i]['n_productos_vigentes']),  # NUEVA LÍNEA
-                    "edad":            int(df.iloc[i]["edad"]),
-                    "probabilidad":    float(probs[i]),
-                    "prediccion":      int(preds[i]),
-                    "riesgo":          "ALTO" if preds[i] == 1 else "BAJO",
-                    "z_score":         float(zs[i]),
-                    "sigmoide":        float(sig[i])
+                    'estado_ahorro_activo': int(df.iloc[i]['estado_ahorro_activo']),
+                    'n_productos_vigentes': int(df.iloc[i]['n_productos_vigentes']),
+                    "edad": int(df.iloc[i]["edad"]),
+                    # CORREGIDO: Preservar datos adicionales del CSV original
+                    "porcentaje_pago": float(df.iloc[i].get('porcentaje_pago', 100)),
+                    "dias_de_mora": int(df.iloc[i].get('dias_de_mora', 0)),
+                    "plazo_credito_meses": int(df.iloc[i].get('plazo_credito_meses', 12)),
+                    "num_microseguros": int(df.iloc[i].get('num_microseguros', 0)),
+                    "n_creditos_vigentes": int(df.iloc[i].get('n_creditos_vigentes', 1)),
+                    "probabilidad": float(probs[i]),
+                    "prediccion": int(preds[i]),
+                    "riesgo": "ALTO" if preds[i] == 1 else "BAJO",
+                    "z_score": float(zs[i]),
+                    "sigmoide": float(sig[i])
                 })
 
             return {
                 "success": True,
                 "estadisticas": {
-                    "total_clientes":    total,
-                    "clientes_fieles":    fieles,
-                    "posibles_desertores":desertores,
-                    "riesgo_alto":        riesgo_alto,
-                    "pct_fieles":         pct_fieles,
-                    "pct_desertores":     pct_desertores
+                    "total_clientes": total,
+                    "clientes_fieles": fieles,
+                    "posibles_desertores": desertores,
+                    "riesgo_alto": riesgo_alto,
+                    "pct_fieles": pct_fieles,
+                    "pct_desertores": pct_desertores
                 },
-                "datos_torta":      datos_torta,
-                "datos_sigmoide":   datos_sigmoide,
+                "datos_torta": datos_torta,
+                "datos_sigmoide": datos_sigmoide,
                 "datos_detallados": datos_detallados,
                 "total_procesados": total
             }
 
         except Exception as e:
             return {"success": False, "error": str(e)}
+        

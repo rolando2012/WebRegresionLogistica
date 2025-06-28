@@ -173,27 +173,78 @@
                     <canvas id="sigmoidChart"></canvas>
                 </div>
 
-                <!-- Descripción debajo del gráfico -->
-                <div class="mt-4 text-sm text-gray-700 space-y-2">
-                    Cada punto <em>z</em> en el eje x es la suma ponderada de las variables de cliente más un sesgo:</p>
-                    <pre class="bg-gray-100 p-2 rounded text-xs overflow-auto">
-                z = &beta;<sub>1</sub>&middot;edad + &beta;<sub>2</sub>&middot;tasa_interes + &beta;<sub>3</sub>&middot;porcentaje_pago + 
-                &beta;<sub>4</sub>&middot;dias_de_mora + &beta;<sub>5</sub>&middot;plazo_credito_meses + &beta;<sub>6</sub>&middot;num_microseguros + 
-                &beta;<sub>7</sub>&middot;n_productos_vigentes + &beta;<sub>8</sub>&middot;n_creditos_vigentes + &beta;<sub>9</sub>&middot;calidad_servicio + 
-                &beta;<sub>10</sub>&middot;estado_ahorro_activo + &beta;<sub>0</sub>
-                    </pre>
-                    <p>
-                    • Cuando <em>z</em> es muy negativo → σ(z)≈0 → <strong>baja probabilidad de deserción</strong> (el cliente probablemente se queda).<br>
-                    • Cuando <em>z</em>≈0 → σ(z)=0.5 → <strong>incertidumbre</strong> (frontera de decisión).<br>
-                    • Cuando <em>z</em> es muy positivo → σ(z)≈1 → <strong>alta probabilidad de deserción</strong> (el cliente probablemente deserta).
-                    </p>
-                    <p>
-                    Cada peso <code>wᵢ</code> indica la influencia de esa variable en la probabilidad final.  
-                    Por ejemplo, un <code>w₄</code> grande y positivo para <em>dias_de_mora</em> implicará que más días de mora aumentan el riesgo de deserción.
-                    </p>
+
+                <div class="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4 md:p-6">
+                <h3 class="text-lg md:text-xl font-semibold text-blue-800 mb-4">Fórmula de Regresión Logística</h3>
+                
+                <!-- Fórmula principal responsive -->
+                <div class="bg-white border rounded-lg p-3 md:p-4 mb-4 overflow-x-auto">
+                    <div class="text-center mb-3">
+                        <div class="text-sm md:text-base font-medium text-gray-700 mb-2">Probabilidad de Deserción:</div>
+                        <div class="text-lg md:text-xl font-mono">
+                            P(Y=1) = <span class="inline-block">
+                                <span class="text-blue-600">1</span>
+                                <hr class="border-t border-gray-400 my-1">
+                                <span class="text-blue-600">1 + e<sup>-z</sup></span>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Función sigmoide alternativa -->
+                    <div class="text-center text-sm md:text-base text-gray-600 mb-3">
+                        También conocida como: σ(z) = <span class="font-mono text-blue-600">1/(1 + e<sup>-z</sup>)</span>
+                    </div>
+                    
+                    <!-- Separador -->
+                    <hr class="border-gray-300 my-3">
+                    
+                    <!-- Fórmula de z -->
+                    <div class="text-center">
+                        <div class="text-sm md:text-base font-medium text-gray-700 mb-2">Donde z es la combinación lineal:</div>
+                        <div class="bg-gray-50 p-2 md:p-3 rounded text-xs md:text-sm font-mono overflow-x-auto">
+                            <div class="whitespace-nowrap">
+                                z = β₀ + β₁·edad + β₂·tasa_interes + β₃·porcentaje_pago + β₄·dias_de_mora + 
+                                β₅·plazo_credito_meses + β₆·num_microseguros + β₇·n_productos_vigentes + 
+                                β₈·n_creditos_vigentes + β₉·calidad_servicio + β₁₀·estado_ahorro_activo
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                
+                    <!-- Interpretación en tarjetas responsive -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-4">
+                        <div class="bg-green-100 border border-green-300 rounded-lg p-3 text-center">
+                            <div class="font-semibold text-green-800 text-sm md:text-base">z muy negativo</div>
+                            <div class="text-xs md:text-sm text-green-700 mt-1">σ(z) ≈ 0</div>
+                            <div class="text-xs md:text-sm text-green-600 mt-1">Baja probabilidad de deserción</div>
+                        </div>
+                        <div class="bg-yellow-100 border border-yellow-300 rounded-lg p-3 text-center">
+                            <div class="font-semibold text-yellow-800 text-sm md:text-base">z ≈ 0</div>
+                            <div class="text-xs md:text-sm text-yellow-700 mt-1">σ(z) = 0.5</div>
+                            <div class="text-xs md:text-sm text-yellow-600 mt-1">Frontera de decisión</div>
+                        </div>
+                        <div class="bg-red-100 border border-red-300 rounded-lg p-3 text-center">
+                            <div class="font-semibold text-red-800 text-sm md:text-base">z muy positivo</div>
+                            <div class="text-xs md:text-sm text-red-700 mt-1">σ(z) ≈ 1</div>
+                            <div class="text-xs md:text-sm text-red-600 mt-1">Alta probabilidad de deserción</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Nota sobre los coeficientes -->
+                    <div class="bg-gray-100 border border-gray-300 rounded-lg p-3 md:p-4">
+                        <div class="text-sm md:text-base text-gray-700">
+                            <strong>Interpretación de los coeficientes β:</strong>
+                            <ul class="mt-2 space-y-1 text-xs md:text-sm">
+                                <li>• <strong>β₀:</strong> Sesgo o intercepto del modelo</li>
+                                <li>• <strong>βᵢ > 0:</strong> La variable aumenta la probabilidad de deserción</li>
+                                <li>• <strong>βᵢ < 0:</strong> La variable disminuye la probabilidad de deserción</li>
+                                <li>• <strong>|βᵢ| grande:</strong> Mayor influencia de la variable en la predicción</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
 
+            </div>
 
                 <div id="rocSection"></div>
                 <div id="confMatrixSection"></div>

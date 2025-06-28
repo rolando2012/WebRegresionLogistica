@@ -177,9 +177,10 @@
                 <div class="mt-4 text-sm text-gray-700 space-y-2">
                     Cada punto <em>z</em> en el eje x es la suma ponderada de las variables de cliente más un sesgo:</p>
                     <pre class="bg-gray-100 p-2 rounded text-xs overflow-auto">
-                z = w₁·edad  + w₂·tasa_interes  + w₃·porcentaje_pago  + w₄·dias_de_mora  + w₅·plazo_credito_meses 
-                + w₆·num_microseguros  + w₇·n_productos_vigentes  + w₈·n_creditos_vigentes  + w₉·calidad_servicio 
-                + w₁₀·estado_ahorro_activo  + b
+                z = &beta;<sub>1</sub>&middot;edad + &beta;<sub>2</sub>&middot;tasa_interes + &beta;<sub>3</sub>&middot;porcentaje_pago + 
+                &beta;<sub>4</sub>&middot;dias_de_mora + &beta;<sub>5</sub>&middot;plazo_credito_meses + &beta;<sub>6</sub>&middot;num_microseguros + 
+                &beta;<sub>7</sub>&middot;n_productos_vigentes + &beta;<sub>8</sub>&middot;n_creditos_vigentes + &beta;<sub>9</sub>&middot;calidad_servicio + 
+                &beta;<sub>10</sub>&middot;estado_ahorro_activo + &beta;<sub>0</sub>
                     </pre>
                     <p>
                     • Cuando <em>z</em> es muy negativo → σ(z)≈0 → <strong>baja probabilidad de deserción</strong> (el cliente probablemente se queda).<br>

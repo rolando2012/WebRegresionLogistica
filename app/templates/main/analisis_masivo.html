@@ -5,7 +5,7 @@
 
     <!-- Botón hamburguesa -->
     <button id="btnToggle"
-            class="absolute top-4 left-4 z-40 md:hidden bg-white p-2 rounded-md shadow">
+            class="absolute top-3 left-4 z-30 md:hidden bg-white p-2 rounded-md shadow">
       <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M4 6h16M4 12h16M4 18h16"/>
@@ -15,8 +15,9 @@
 <div class="flex min-h-screen bg-gray-50">
     <!-- Sidebar -->
     <div id="sidebar"
-           class="fixed inset-y-0 left-0 z-30 w-64 bg-white shadow-sm border-r border-gray-200 transform -translate-x-full transition-transform duration-300
-                  md:translate-x-0 md:static md:shadow-none md:border-none">
+           class="fixed inset-y-0 left-0 z-40 w-64 bg-white shadow-sm border-r border-gray-200 
+                transform -translate-x-full transition-transform duration-300
+                md:translate-x-0 md:static md:shadow-none md:border-none">
 
         <!-- Navegación -->
         <nav class="p-4 space-y-2">
@@ -67,7 +68,7 @@
 
     <!-- Contenido Principal -->
     <div class="flex-1">
-        <div class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 md:py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8">
             <!-- Breadcrumb -->
             <div class="mb-8 pl-12 md:pl-0">
                 <nav class="flex items-center space-x-2 text-sm text-gray-500">
@@ -102,7 +103,7 @@
                 </div>
                 <label for="csv_file" class="cursor-pointer">
                     <span id="file-label" class="text-base md:text-lg font-medium text-gray-900">Selecciona un archivo CSV</span>
-<p class="text-sm md:text-base text-gray-500 mt-2">O arrastra y suelta el archivo aquí</p>
+                    <p class="text-sm md:text-base text-gray-500 mt-2">O arrastra y suelta el archivo aquí</p>
                     <input type="file" id="csv_file" name="csv_file" accept=".csv" class="hidden" required>
                 </label>
             </div>
@@ -155,7 +156,7 @@
                                 </tr>
                                 <tr>
                                     <td class="py-1 md:py-2 px-2 md:px-4 font-mono text-gray-700 text-xs md:text-sm">tasa_interes</td>
-                                    <td class="py-1 md:py-2 px-2 md:px-4 text-gray-600 text-xs md:text-sm hidden sm:table-cell">asa de interés aplicada al crédito</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 text-gray-600 text-xs md:text-sm hidden sm:table-cell">Tasa de interés aplicada al crédito</td>
                                     <td class="py-1 md:py-2 px-2 md:px-4 text-gray-600 text-xs md:text-sm">Numérico</td>
                                 </tr>
                                 <tr>
@@ -295,8 +296,10 @@
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
       const backdrop = document.getElementById('backdrop');
+      const btnToggle = document.getElementById('btnToggle');
       sidebar.classList.toggle('-translate-x-full');
       backdrop.classList.toggle('hidden');
+      btnToggle.classList.toggle('hidden');
     }
 // Columnas esperadas
 const expectedColumns = [
@@ -514,7 +517,7 @@ function showPreview(data, headers) {
     
     // Crear encabezados de tabla
     let tableHTML = '<thead class="bg-gray-50"><tr>';
-    tableHTML += '<th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>';
+    tableHTML += '<th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>';
     
     // Nombres de columnas para mostrar (mapeo más completo)
     const columnDisplayNames = {
@@ -533,7 +536,7 @@ function showPreview(data, headers) {
     // Mostrar TODAS las columnas
     displayHeaders.forEach(header => {
         const displayName = columnDisplayNames[header] || header;
-        tableHTML += `<th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">${displayName}</th>`;
+        tableHTML += `<th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">${displayName}</th>`;
     });
     
     tableHTML += '</tr></thead><tbody class="bg-white divide-y divide-gray-200">';
@@ -541,7 +544,7 @@ function showPreview(data, headers) {
     // Crear filas de datos
     data.forEach((row, index) => {
         tableHTML += '<tr>';
-        tableHTML += `<td class="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">${String(index + 1).padStart(3, '0')}</td>`;
+        tableHTML += `<td class="px-2 py-2 whitespace-nowrap text-xs font-medium text-gray-900">${String(index + 1).padStart(3, '0')}</td>`;
         
         displayHeaders.forEach(header => {
             let value = row[header];
@@ -556,7 +559,7 @@ function showPreview(data, headers) {
             }
 
             
-            tableHTML += `<td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500">${value}</td>`;
+            tableHTML += `<td class="px-2 py-2 whitespace-nowrap text-xs text-gray-500">${value}</td>`;
         });
         tableHTML += '</tr>';
     });

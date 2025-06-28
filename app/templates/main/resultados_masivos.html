@@ -1,9 +1,22 @@
 {% extends "base.html" %}
 
 {% block content %}
+ <div class="relative">
+    <!-- Botón hamburguesa -->
+    <button id="btnToggle"
+            class="absolute top-5 left-4 z-30 md:hidden bg-white p-2 rounded-md shadow">
+      <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+
 <div class="flex min-h-screen bg-gray-50">
     <!-- Sidebar -->
-    <div class="w-64 bg-white shadow-sm border-r border-gray-200 min-h-screen">
+    <div id="sidebar"
+        class="fixed inset-y-0 left-0 z-40 w-64 bg-white shadow-sm border-r border-gray-200
+                  transform -translate-x-full transition-transform duration-300
+                  md:translate-x-0 md:static md:shadow-none md:border-none">
         <!-- Navegación -->
         <nav class="p-4 space-y-2">
             <!-- Visualizar Datos -->
@@ -46,6 +59,8 @@
             </a>
         </nav>
     </div>
+
+    <div id="backdrop" class="fixed inset-0 bg-black bg-opacity-25 z-20 hidden" onclick="toggleSidebar()"></div>
 
     <!-- Contenido Principal -->
     <div class="flex-1">
@@ -263,6 +278,16 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 <script>
+document.getElementById('btnToggle').addEventListener('click', toggleSidebar);
+function toggleSidebar() {
+    const sd = document.getElementById('sidebar');
+    const bd = document.getElementById('backdrop');
+    const btnToggle = document.getElementById('btnToggle');
+    sd.classList.toggle('-translate-x-full');
+    bd.classList.toggle('hidden');
+    btnToggle.classList.toggle('hidden');
+}
+
 // Datos desde el servidor
 const datosResultados = JSON.parse('{{ resultados | tojson | safe }}');
 

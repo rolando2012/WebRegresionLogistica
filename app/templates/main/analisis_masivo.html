@@ -67,7 +67,7 @@
 
     <!-- Contenido Principal -->
     <div class="flex-1">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 md:py-8">
             <!-- Breadcrumb -->
             <div class="mb-8 pl-12 md:pl-0">
                 <nav class="flex items-center space-x-2 text-sm text-gray-500">
@@ -81,28 +81,28 @@
 
             <!-- Título de la Sección -->
             <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">Análisis Masivo</h1>
-                <p class="text-gray-600">Procesa múltiples clientes simultáneamente cargando un archivo CSV</p>
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Análisis Masivo</h1>
+                <p class="text-sm md:text-base text-gray-600">Procesa múltiples clientes simultáneamente cargando un archivo CSV</p>
             </div>
 
             <!-- Contenido Principal -->
-            <div class="space-y-8">
+            <div class="space-y-4 md:space-y-8">
                 <!-- Sección: Cargar Archivo -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-2">Cargar Archivo CSV</h2>
-                    <p class="text-gray-600 mb-6">Sube un archivo CSV con los datos de los clientes para analizar</p>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-6">
+                    <h2 class="text-lg md:text-xl font-semibold text-gray-900 mb-2">Cargar Archivo CSV</h2>
+                    <p class="text-sm md:text-base text-gray-600 mb-6">Sube un archivo CSV con los datos de los clientes para analizar</p>
                     
             <form id="csvForm" method="POST" enctype="multipart/form-data" class="space-y-6">
             <!-- Área de carga de archivo -->
-            <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
+           <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 md:p-8 text-center hover:border-gray-400 transition-colors">
                 <div class="bg-blue-50 w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4">
                     <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                     </svg>
                 </div>
                 <label for="csv_file" class="cursor-pointer">
-                    <span id="file-label" class="text-lg font-medium text-gray-900">Selecciona un archivo CSV</span>
-                    <p class="text-gray-500 mt-2">O arrastra y suelta el archivo aquí</p>
+                    <span id="file-label" class="text-base md:text-lg font-medium text-gray-900">Selecciona un archivo CSV</span>
+<p class="text-sm md:text-base text-gray-500 mt-2">O arrastra y suelta el archivo aquí</p>
                     <input type="file" id="csv_file" name="csv_file" accept=".csv" class="hidden" required>
                 </label>
             </div>
@@ -110,9 +110,9 @@
         </form>
 
                 <!-- Sección de Vista Previa (inicialmente oculta) -->
-                <div id="preview-section" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hidden">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-2">Vista Previa de Datos</h2>
-                    <p id="preview-subtitle" class="text-gray-600 mb-6">Primeras 10 filas minimas del archivo cargado</p>
+                <div id="preview-section" class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-6 hidden">
+                    <h2 class="text-lg md:text-xl font-semibold text-gray-900 mb-2">Vista Previa de Datos</h2>
+                    <p id="preview-subtitle" class="text-sm md:text-base text-gray-600 mb-6">Primeras 10 filas minimas del archivo cargado</p>
                     
                     <div class="overflow-x-auto">
                         <table id="preview-table" class="min-w-full text-sm">
@@ -120,9 +120,9 @@
                         </table>
                     </div>
                     
-                    <div class="flex justify-between items-center mt-4">
-                        <p id="total-records" class="text-gray-600">Total de registros: 0</p>
-                        <button id="predict-btn" class="bg-black text-white px-8 py-3 rounded-lg hover:bg-gray-800 transition-colors flex items-center space-x-2">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 gap-4">
+                        <p id="total-records" class="text-sm md:text-base text-gray-600">Total de registros: 0</p>
+                        <button id="predict-btn" class="bg-black text-white px-6 md:px-8 py-2 md:py-3 rounded-lg hover:bg-gray-800 transition-colors flex items-center space-x-2 w-full sm:w-auto justify-center">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
@@ -134,69 +134,69 @@
                 </div>
 
                 <!-- Sección: Formato del Archivo -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Formato del Archivo CSV</h2>
-                    <p class="text-gray-600 mb-6">El archivo CSV debe contener las siguientes columnas:</p>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-6">
+                    <h2 class="text-lg md:text-xl font-semibold text-gray-900 mb-4">Formato del Archivo CSV</h2>
+                    <p class="text-sm md:text-base text-gray-600 mb-6">El archivo CSV debe contener las siguientes columnas:</p>
                     
-                    <div class="bg-gray-50 rounded-lg p-4 overflow-x-auto">
-                        <table class="min-w-full text-sm">
+                    <div class="bg-gray-50 rounded-lg p-2 md:p-4 overflow-x-auto">
+                    <table class="min-w-full text-xs md:text-sm">
                             <thead>
                                 <tr class="border-b border-gray-200">
-                                    <th class="text-left py-2 px-4 font-medium text-gray-900">Columna</th>
-                                    <th class="text-left py-2 px-4 font-medium text-gray-900">Descripción</th>
-                                    <th class="text-left py-2 px-4 font-medium text-gray-900">Tipo</th>
+                                    <th class="text-left py-1 md:py-2 px-2 md:px-4 font-medium text-gray-900">Columna</th>
+                                    <th class="text-left py-1 md:py-2 px-2 md:px-4 font-medium text-gray-900 hidden sm:table-cell">Descripción</th>
+                                    <th class="text-left py-1 md:py-2 px-2 md:px-4 font-medium text-gray-900">Tipo</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200">
                                 <tr>
-                                    <td class="py-2 px-4 font-mono text-gray-700">edad</td>
-                                    <td class="py-2 px-4 text-gray-600">Edad del cliente en años</td>
-                                    <td class="py-2 px-4 text-gray-600">Numérico</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 font-mono text-gray-700 text-xs md:text-sm">edad</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 text-gray-600 text-xs md:text-sm hidden sm:table-cell">Edad del cliente en años</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 text-gray-600 text-xs md:text-sm">Numérico</td>
                                 </tr>
                                 <tr>
-                                    <td class="py-2 px-4 font-mono text-gray-700">tasa_interes</td>
-                                    <td class="py-2 px-4 text-gray-600">Tasa de interés aplicada al crédito</td>
-                                    <td class="py-2 px-4 text-gray-600">Numérico</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 font-mono text-gray-700 text-xs md:text-sm">tasa_interes</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 text-gray-600 text-xs md:text-sm hidden sm:table-cell">asa de interés aplicada al crédito</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 text-gray-600 text-xs md:text-sm">Numérico</td>
                                 </tr>
                                 <tr>
-                                    <td class="py-2 px-4 font-mono text-gray-700">porcentaje_pago</td>
-                                    <td class="py-2 px-4 text-gray-600">Porcentaje de pagos realizados a tiempo</td>
-                                    <td class="py-2 px-4 text-gray-600">Numérico</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 font-mono text-gray-700 text-xs md:text-sm">porcentaje_pago</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 text-gray-600 text-xs md:text-sm hidden sm:table-cell">Porcentaje de pagos realizados a tiempo</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 text-gray-600 text-xs md:text-sm">Numérico</td>
                                 </tr>
                                 <tr>
-                                    <td class="py-2 px-4 font-mono text-gray-700">dias_de_mora</td>
-                                    <td class="py-2 px-4 text-gray-600">Días de mora acumulados</td>
-                                    <td class="py-2 px-4 text-gray-600">Numérico</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 font-mono text-gray-700 text-xs md:text-sm">dias_de_mora</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 text-gray-600 text-xs md:text-sm hidden sm:table-cell">Días de mora acumulados</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 text-gray-600 text-xs md:text-sm">Numérico</td>
                                 </tr>
                                 <tr>
-                                    <td class="py-2 px-4 font-mono text-gray-700">plazo_credito_meses</td>
-                                    <td class="py-2 px-4 text-gray-600">Plazo del crédito en meses</td>
-                                    <td class="py-2 px-4 text-gray-600">Numérico</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 font-mono text-gray-700 text-xs md:text-sm">plazo_credito_meses</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 text-gray-600 text-xs md:text-sm hidden sm:table-cell">Plazo del crédito en meses</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 text-gray-600 text-xs md:text-sm">Numérico</td>
                                 </tr>
                                 <tr>
-                                    <td class="py-2 px-4 font-mono text-gray-700">num_microseguros</td>
-                                    <td class="py-2 px-4 text-gray-600">Cantidad de microseguros contratados</td>
-                                    <td class="py-2 px-4 text-gray-600">Numérico</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 font-mono text-gray-700 text-xs md:text-sm">num_microseguros</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 text-gray-600 text-xs md:text-sm hidden sm:table-cell">Cantidad de microseguros contratados</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 text-gray-600 text-xs md:text-sm">Numérico</td>
                                 </tr>
                                 <tr>
-                                    <td class="py-2 px-4 font-mono text-gray-700">n_productos_vigentes</td>
-                                    <td class="py-2 px-4 text-gray-600">Número de productos bancarios vigentes</td>
-                                    <td class="py-2 px-4 text-gray-600">Numérico</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 font-mono text-gray-700 text-xs md:text-sm">n_productos_vigentes</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 text-gray-600 text-xs md:text-sm hidden sm:table-cell">Número de productos bancarios vigentes</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 text-gray-600 text-xs md:text-sm">Numérico</td>
                                 </tr>
                                 <tr>
-                                    <td class="py-2 px-4 font-mono text-gray-700">n_creditos_vigentes</td>
-                                    <td class="py-2 px-4 text-gray-600">Número total de créditos otorgados</td>
-                                    <td class="py-2 px-4 text-gray-600">Numérico</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 font-mono text-gray-700 text-xs md:text-sm">n_creditos_vigentes</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 text-gray-600 text-xs md:text-sm hidden sm:table-cell">Número total de créditos otorgados</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 text-gray-600 text-xs md:text-sm">Numérico</td>
                                 </tr>
                                 <tr>
-                                    <td class="py-2 px-4 font-mono text-gray-700">calidad_servicio</td>
-                                    <td class="py-2 px-4 text-gray-600">Calificación de la calidad del servicio</td>
-                                    <td class="py-2 px-4 text-gray-600">Numérico</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 font-mono text-gray-700 text-xs md:text-sm">calidad_servicio</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 text-gray-600 text-xs md:text-sm hidden sm:table-cell">Calificación de la calidad del servicio</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 text-gray-600 text-xs md:text-sm">Numérico</td>
                                 </tr>
                                 <tr>
-                                    <td class="py-2 px-4 font-mono text-gray-700">estado_ahorro_activo</td>
-                                    <td class="py-2 px-4 text-gray-600">Estado de cuenta de ahorro (0: Inactivo, 1: Activo)</td>
-                                    <td class="py-2 px-4 text-gray-600">Dummy</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 font-mono text-gray-700 text-xs md:text-sm">estado_ahorro_activo</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 text-gray-600 text-xs md:text-sm hidden sm:table-cell">Estado de cuenta de ahorro (0: Inactivo, 1: Activo)</td>
+                                    <td class="py-1 md:py-2 px-2 md:px-4 text-gray-600 text-xs md:text-sm">Dummy</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -205,7 +205,7 @@
                     <!-- Ejemplo de archivo -->
                     <div class="mt-6">
                         <h3 class="font-medium text-gray-900 mb-3">Ejemplo de archivo CSV:</h3>
-                        <div class="bg-gray-900 text-green-400 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                        <div class="bg-gray-900 text-green-400 rounded-lg p-2 md:p-4 font-mono text-xs md:text-sm overflow-x-auto">
                             <div>edad,tasa_interes,porcentaje_pago,dias_de_mora,plazo_credito_meses,num_microseguros,n_productos_vigentes,n_creditos_vigentes,calidad_servicio,estado_ahorro_activo</div>
                             <div>35,12.5,95.5,0,24,2,3,5,62,1</div>
                             <div>28,15.0,88.2,5,12,1,2,3,38,0</div>
@@ -216,11 +216,11 @@
 
                 <!-- Sección: Resultados (solo mostrar si hay resultados) -->
                 {% if resultados %}
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Resultados del Análisis</h2>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-6">
+                <h2 class="text-lg md:text-xl font-semibold text-gray-900 mb-4">Resultados del Análisis</h2>
                     
                     <!-- Resumen -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-8">
                         <div class="bg-blue-50 rounded-lg p-4 text-center">
                             <div class="text-2xl font-bold text-blue-600">{{ resultados.total_clientes }}</div>
                             <div class="text-sm text-gray-600">Clientes Procesados</div>
@@ -236,22 +236,22 @@
                     </div>
 
                     <!-- Tabla de resultados -->
-                    <div class="overflow-x-auto">
+                    <div class="overflow-x-auto -mx-4 md:mx-0">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Edad</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ingreso</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Préstamo</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Probabilidad</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Riesgo</th>
+                                    <th class="px-2 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente</th>
+                                    <th class="px-2 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Edad</th>
+                                    <th class="px-2 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ingreso</th>
+                                    <th class="px-2 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Préstamo</th>
+                                    <th class="px-2 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Probabilidad</th>
+                                    <th class="px-2 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Riesgo</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 {% for resultado in resultados.detalle %}
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Cliente {{ loop.index }}</td>
+                                    <td class="px-2 md:px-6 py-4 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900">Cliente {{ loop.index }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ resultado.edad }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${{ resultado.ingreso_mensual }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${{ resultado.monto_prestamo }}</td>
@@ -275,7 +275,7 @@
 
                     <!-- Botón de descarga -->
                     <div class="mt-6 text-center">
-                        <a href="{{ url_for('main.descargar_resultados') }}" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center space-x-2">
+                    <a href="{{ url_for('main.descargar_resultados') }}" class="bg-primary text-white px-4 md:px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center space-x-2 text-sm md:text-base">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>

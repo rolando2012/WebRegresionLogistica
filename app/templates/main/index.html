@@ -26,43 +26,75 @@
     <!-- Feature Cards -->
     <div class="grid md:grid-cols-3 gap-8 mb-16">
         <!-- Visualizar Datos -->
-        <a href="{{ url_for('main.visualizar_datos') }}" class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 hover:shadow-md transition-shadow cursor-pointer group block">
-            <div class="bg-blue-50 w-16 h-16 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-100 transition-colors">
-                <svg class="w-11 h-11 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                     <path d="M0 13h16v2h-16zM2 9h2v3h-2zM5 5h2v7h-2zM8 8h2v4h-2zM11 2h2v10h-2z"></path>
+        <a href="{{ url_for('main.visualizar_datos') }}"
+            class="flex flex-col items-center bg-white rounded-xl shadow-sm border border-gray-200 p-8
+                    hover:shadow-md transition-shadow cursor-pointer group">
+            <div
+                class="bg-blue-50 w-16 h-16 rounded-lg flex items-center justify-center mb-6
+                        group-hover:bg-blue-100 transition-colors">
+                <svg
+                    class="block w-11 h-11 text-primary"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path d="M0 13h16v2h-16zM2 9h2v3h-2zM5 5h2v7h-2zM8 8h2v4h-2zM11 2h2v10h-2z"></path>
                 </svg>
-            </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-3">Visualizar Datos de Entrenamiento</h3>
-            <p class="text-gray-600">
+                </div>
+
+            <h3 class="text-xl font-semibold text-gray-900 mb-3 text-center">
+                Visualizar Datos de Entrenamiento
+            </h3>
+            <p class="text-gray-600 text-center">
                 Explora gráficos interactivos, correlaciones y métricas del modelo
             </p>
-        </a>
+            </a>
 
         <!-- Predicción Individual -->
-        <a href="{{ url_for('main.prediccion_individual') }}" class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 hover:shadow-md transition-shadow cursor-pointer group block">
-            <div class="bg-blue-50 w-16 h-16 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-100 transition-colors">
-                <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                </svg>
-            </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-3">Predicción Individual</h3>
-            <p class="text-gray-600">
-                Analiza el riesgo de deserción de un cliente específico
-            </p>
+        <a href="{{ url_for('main.prediccion_individual') }}"
+        class="flex flex-col items-center bg-white rounded-xl shadow-sm border border-gray-200 p-8 
+                hover:shadow-md transition-shadow cursor-pointer group block">
+
+        <div
+            class="bg-blue-50 w-16 h-16 rounded-lg flex items-center justify-center mb-6
+                group-hover:bg-blue-100 transition-colors">
+            <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+        </div>
+
+        <h3 class="text-xl font-semibold text-gray-900 mb-3 text-center">
+            Predicción Individual
+        </h3>
+        <p class="text-gray-600 text-center">
+            Analiza el riesgo de deserción de un cliente específico
+        </p>
         </a>
 
         <!-- Análisis Masivo -->
-        <a href="{{ url_for('main.analisis_masivo') }}" class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 hover:shadow-md transition-shadow cursor-pointer group block">
-            <div class="bg-blue-50 w-16 h-16 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-100 transition-colors">
+        <a href="{{ url_for('main.analisis_masivo') }}"
+            class="flex flex-col items-center bg-white rounded-xl shadow-sm border border-gray-200 p-8
+                    hover:shadow-md transition-shadow cursor-pointer group">
+            <div
+                class="bg-blue-50 w-16 h-16 rounded-lg flex items-center justify-center mb-6
+                    group-hover:bg-blue-100 transition-colors">
                 <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857
+                        M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857
+                        m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0
+                        2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                </path>
                 </svg>
             </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-3">Análisis Masivo</h3>
-            <p class="text-gray-600">
+            <h3 class="text-xl font-semibold text-gray-900 mb-3 text-center">
+                Análisis Masivo
+            </h3>
+            <p class="text-gray-600 text-center">
                 Procesa miles de clientes simultáneamente con archivos CSV
             </p>
-        </a>
+            </a>
     </div>
 
     <!-- Stats Section -->

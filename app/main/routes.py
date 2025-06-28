@@ -312,7 +312,7 @@ def exportar_pdf():
         buffer = io.BytesIO()
         
         # Crear documento PDF
-        doc = SimpleDocTemplate(buffer, pagesize=A4,
+        doc = SimpleDocTemplate(buffer, pagesize=letter,
                               rightMargin=50, leftMargin=50,
                               topMargin=50, bottomMargin=50)
         
@@ -395,10 +395,10 @@ def exportar_pdf():
         wedges, texts, autotexts = ax.pie(sizes, labels=labels, colors=colors_pie, autopct='%1.1f%%',
                                          startangle=90, textprops={'fontsize': 10})
         ax.set_title('Distribución de Clientes por Riesgo de Deserción', fontsize=12, fontweight='bold')
-        
+        ax.axis('equal') 
         # Guardar gráfico como imagen
         pie_buffer = io.BytesIO()
-        plt.savefig(pie_buffer, format='png', dpi=300, bbox_inches='tight')
+        plt.savefig(pie_buffer, format='png', dpi=300, pad_inches=0.1 )
         pie_buffer.seek(0)
         
         # Agregar imagen al PDF
@@ -431,7 +431,7 @@ def exportar_pdf():
         # Crear línea sigmoide suave
         z_range = np.linspace(min(z_scores), max(z_scores), 100)
         sigmoid_line = 1 / (1 + np.exp(-z_range))
-        ax.plot(z_range, sigmoid_line, 'k--', alpha=0.5, linewidth=2, label='Función Sigmoide')
+        ax.plot(z_range, sigmoid_line, 'b--', alpha=0.5, linewidth=2, label='Función Sigmoide')
         
         ax.set_xlabel('Z-Score', fontsize=10)
         ax.set_ylabel('Probabilidad (Sigmoide)', fontsize=10)
